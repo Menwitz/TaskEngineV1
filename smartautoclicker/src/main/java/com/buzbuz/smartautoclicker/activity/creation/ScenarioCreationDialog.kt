@@ -1,19 +1,4 @@
-/*
- * Copyright (C) 2023 Kevin Buzeau
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+
 package com.buzbuz.smartautoclicker.activity.creation
 
 import android.app.Dialog
@@ -80,7 +65,6 @@ class ScenarioCreationDialog : DialogFragment() {
         viewBinding = DialogScenarioCreationBinding.inflate(layoutInflater).apply {
             layoutTopBar.initTopBar()
             scenarioNameInputLayout.initScenarioNameField()
-            scenarioTypeDumb.initScenarioTypeCard(ScenarioTypeSelection.DUMB)
             scenarioTypeSmart.initScenarioTypeCard(ScenarioTypeSelection.SMART)
         }
 
@@ -126,10 +110,6 @@ class ScenarioCreationDialog : DialogFragment() {
 
     private fun IncludeScenarioTypeViewBinding.initScenarioTypeCard(type: ScenarioTypeSelection) {
         when (type) {
-            ScenarioTypeSelection.DUMB -> {
-                titleScenarioType.setText(R.string.item_title_dumb_scenario)
-                imageScenarioType.setImageResource(R.drawable.ic_dumb)
-            }
             ScenarioTypeSelection.SMART -> {
                 titleScenarioType.setText(R.string.item_title_smart_scenario)
                 imageScenarioType.setImageResource(R.drawable.ic_smart)
@@ -145,11 +125,9 @@ class ScenarioCreationDialog : DialogFragment() {
 
     private fun updateTypeSelection(state: ScenarioTypeSelectionState) {
         viewBinding.apply {
-            scenarioTypeDumb.setState(state.dumbItem, state.selectedItem, ScenarioTypeSelection.DUMB)
             scenarioTypeSmart.setState(state.smartItem, state.selectedItem, ScenarioTypeSelection.SMART)
             scenarioTypeDescription.setText(
                 when (state.selectedItem) {
-                    ScenarioTypeSelection.DUMB -> state.dumbItem.descriptionText
                     ScenarioTypeSelection.SMART -> state.smartItem.descriptionText
                 }
             )

@@ -1,19 +1,4 @@
-/*
- * Copyright (C) 2023 Kevin Buzeau
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+
 package com.buzbuz.smartautoclicker.activity
 
 import android.content.ActivityNotFoundException
@@ -36,8 +21,6 @@ import com.buzbuz.smartautoclicker.activity.list.ScenarioListFragment
 import com.buzbuz.smartautoclicker.activity.list.ScenarioListUiState
 import com.buzbuz.smartautoclicker.core.base.extensions.delayDrawUntil
 import com.buzbuz.smartautoclicker.core.domain.model.scenario.Scenario
-import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbScenario
-import com.buzbuz.smartautoclicker.feature.revenue.UserConsentState
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -76,10 +59,6 @@ class ScenarioActivity : AppCompatActivity(), ScenarioListFragment.Listener {
             }
         }
 
-        // Splash screen is dismissed on first frame drawn, delay it until we have a user consent status
-        findViewById<View>(android.R.id.content).delayDrawUntil {
-            scenarioViewModel.userConsentState.value != UserConsentState.UNKNOWN
-        }
     }
 
     override fun onResume() {
@@ -99,7 +78,6 @@ class ScenarioActivity : AppCompatActivity(), ScenarioListFragment.Listener {
     private fun onMandatoryPermissionsGranted() {
         scenarioViewModel.startTroubleshootingFlowIfNeeded(this) {
             when (val scenario = requestedItem?.scenario) {
-                is DumbScenario -> startDumbScenario(scenario)
                 is Scenario -> showMediaProjectionWarning()
             }
         }
@@ -136,13 +114,6 @@ class ScenarioActivity : AppCompatActivity(), ScenarioListFragment.Listener {
             .setNegativeButton(android.R.string.cancel, null)
             .create()
             .show()
-    }
-
-    private fun startDumbScenario(scenario: DumbScenario) {
-        handleScenarioStartResult(scenarioViewModel.loadDumbScenario(
-            context = this,
-            scenario = scenario,
-        ))
     }
 
     private fun startSmartScenario(result: ActivityResult, scenario: Scenario) {

@@ -21,7 +21,6 @@ import androidx.annotation.IntRange
 import com.buzbuz.smartautoclicker.R
 import com.buzbuz.smartautoclicker.core.domain.model.condition.ImageCondition
 import com.buzbuz.smartautoclicker.core.domain.model.scenario.Scenario
-import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbScenario
 import com.buzbuz.smartautoclicker.feature.smart.config.utils.ALPHA_DISABLED_ITEM_INT
 import com.buzbuz.smartautoclicker.feature.smart.config.utils.ALPHA_ENABLED_ITEM_INT
 
@@ -88,8 +87,6 @@ data class ScenarioListUiState(
         data class Selection(
             private val searchEnabled: Boolean,
             private val exportEnabled: Boolean,
-            private val privacyRequired: Boolean,
-            private val canPurchase: Boolean,
         ) : Menu(
             searchItemState = Item(searchEnabled),
             selectAllItemState = Item(false),
@@ -102,8 +99,6 @@ data class ScenarioListUiState(
                 visible = exportEnabled,
                 enabled = exportEnabled,
             ),
-            privacyItemState = Item(privacyRequired),
-            purchaseItemState = Item(canPurchase),
             troubleshootingItemState = Item(true),
         )
     }
@@ -113,10 +108,6 @@ data class ScenarioListUiState(
         abstract val scenario: Any
 
         sealed class Empty(displayName: String, scenarioTypeIcon: Int) : Item(displayName, scenarioTypeIcon) {
-            data class Dumb(
-                override val scenario: DumbScenario,
-            ) : Empty(displayName = scenario.name, scenarioTypeIcon = R.drawable.ic_dumb)
-
             data class Smart(
                 override val scenario: Scenario,
             ) : Empty(displayName = scenario.name, scenarioTypeIcon = R.drawable.ic_smart)
@@ -126,16 +117,6 @@ data class ScenarioListUiState(
 
             abstract val showExportCheckbox: Boolean
             abstract val checkedForExport: Boolean
-            data class Dumb(
-                override val scenario: DumbScenario,
-                override val showExportCheckbox: Boolean = false,
-                override val checkedForExport: Boolean = false,
-                val clickCount: Int,
-                val swipeCount: Int,
-                val pauseCount: Int,
-                val repeatText: String,
-                val maxDurationText: String,
-            ) : Valid(displayName = scenario.name,  scenarioTypeIcon = R.drawable.ic_dumb)
 
             data class Smart(
                 override val scenario: Scenario,

@@ -38,12 +38,9 @@ import com.buzbuz.smartautoclicker.core.common.quality.domain.QualityMetricsMoni
 import com.buzbuz.smartautoclicker.core.common.quality.domain.QualityRepository
 import com.buzbuz.smartautoclicker.core.display.DisplayConfigManager
 import com.buzbuz.smartautoclicker.core.domain.model.scenario.Scenario
-import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbScenario
-import com.buzbuz.smartautoclicker.core.dumb.engine.DumbEngine
 import com.buzbuz.smartautoclicker.core.processing.domain.DetectionRepository
 import com.buzbuz.smartautoclicker.feature.qstile.domain.QSTileActionHandler
 import com.buzbuz.smartautoclicker.feature.qstile.domain.QSTileRepository
-import com.buzbuz.smartautoclicker.feature.revenue.IRevenueRepository
 import com.buzbuz.smartautoclicker.feature.smart.debugging.domain.DebuggingRepository
 
 import dagger.hilt.android.AndroidEntryPoint
@@ -101,7 +98,6 @@ class SmartAutoClickerService : AccessibilityService(), AndroidExecutor {
     }
 
     interface ILocalService {
-        fun startDumbScenario(dumbScenario: DumbScenario)
         fun startSmartScenario(resultCode: Int, data: Intent, scenario: Scenario)
         fun playAndHide()
         fun pauseAndShow()
@@ -130,11 +126,9 @@ class SmartAutoClickerService : AccessibilityService(), AndroidExecutor {
     @Inject lateinit var overlayManager: OverlayManager
     @Inject lateinit var displayConfigManager: DisplayConfigManager
     @Inject lateinit var detectionRepository: DetectionRepository
-    @Inject lateinit var dumbEngine: DumbEngine
     @Inject lateinit var bitmapManager: IBitmapManager
     @Inject lateinit var qualityRepository: QualityRepository
     @Inject lateinit var qualityMetricsMonitor: QualityMetricsMonitor
-    @Inject lateinit var revenueRepository: IRevenueRepository
     @Inject lateinit var tileRepository: QSTileRepository
     @Inject lateinit var debugRepository: DebuggingRepository
 
@@ -147,9 +141,6 @@ class SmartAutoClickerService : AccessibilityService(), AndroidExecutor {
         tileRepository.setTileActionHandler(
             object : QSTileActionHandler {
                 override fun isRunning(): Boolean = isServiceStarted()
-                override fun startDumbScenario(dumbScenario: DumbScenario) {
-                    LOCAL_SERVICE_INSTANCE?.startDumbScenario(dumbScenario)
-                }
                 override fun startSmartScenario(resultCode: Int, data: Intent, scenario: Scenario) {
                     LOCAL_SERVICE_INSTANCE?.startSmartScenario(resultCode, data, scenario)
                 }
@@ -164,10 +155,8 @@ class SmartAutoClickerService : AccessibilityService(), AndroidExecutor {
             overlayManager = overlayManager,
             displayConfigManager = displayConfigManager,
             detectionRepository = detectionRepository,
-            dumbEngine = dumbEngine,
             tileRepository = tileRepository,
             debugRepository = debugRepository,
-            revenueRepository = revenueRepository,
             bitmapManager = bitmapManager,
             androidExecutor = this,
             onStart = { isSmart, name ->
@@ -262,10 +251,8 @@ class SmartAutoClickerService : AccessibilityService(), AndroidExecutor {
         bitmapManager.dump(writer)
         overlayManager.dump(writer)
         detectionRepository.dump(writer)
-        dumbEngine.dump(writer)
         qualityRepository.dump(writer)
 
-        revenueRepository.dump(writer)
     }
 
     override fun onInterrupt() { /* Unused */ }

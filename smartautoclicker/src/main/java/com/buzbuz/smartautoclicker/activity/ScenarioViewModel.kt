@@ -33,13 +33,10 @@ import androidx.lifecycle.viewModelScope
 import com.buzbuz.smartautoclicker.SmartAutoClickerService
 import com.buzbuz.smartautoclicker.core.common.quality.domain.QualityRepository
 import com.buzbuz.smartautoclicker.core.domain.model.scenario.Scenario
-import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbScenario
 import com.buzbuz.smartautoclicker.feature.permissions.PermissionsController
 import com.buzbuz.smartautoclicker.feature.permissions.model.PermissionAccessibilityService
 import com.buzbuz.smartautoclicker.feature.permissions.model.PermissionOverlay
 import com.buzbuz.smartautoclicker.feature.permissions.model.PermissionPostNotification
-import com.buzbuz.smartautoclicker.feature.revenue.IRevenueRepository
-import com.buzbuz.smartautoclicker.feature.revenue.UserConsentState
 
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -52,7 +49,6 @@ import javax.inject.Inject
 @HiltViewModel
 class ScenarioViewModel @Inject constructor(
     @ApplicationContext context: Context,
-    private val revenueRepository: IRevenueRepository,
     private val qualityRepository: QualityRepository,
     private val permissionController: PermissionsController,
 ) : ViewModel() {
@@ -70,9 +66,6 @@ class ScenarioViewModel @Inject constructor(
     /** The Android notification manager. Initialized only if needed.*/
     private val notificationManager: NotificationManager?
 
-    val userConsentState: StateFlow<UserConsentState> = revenueRepository.userConsentState
-        .stateIn(viewModelScope, SharingStarted.Eagerly, UserConsentState.UNKNOWN)
-
     init {
         SmartAutoClickerService.getLocalService(serviceConnection)
 
@@ -88,11 +81,9 @@ class ScenarioViewModel @Inject constructor(
     }
 
     fun requestUserConsentIfNeeded(activity: Activity) {
-        revenueRepository.startUserConsentRequestUiFlowIfNeeded(activity)
     }
 
     fun refreshPurchaseState() {
-        revenueRepository.refreshPurchases()
     }
 
     fun startPermissionFlowIfNeeded(activity: AppCompatActivity, onAllGranted: () -> Unit) {
@@ -136,16 +127,6 @@ class ScenarioViewModel @Inject constructor(
         }
 
         clickerService?.startSmartScenario(resultCode, data, scenario)
-        return true
-    }
-
-    fun loadDumbScenario(context: Context, scenario: DumbScenario): Boolean {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            val foregroundPermission = PermissionChecker.checkSelfPermission(context, Manifest.permission.FOREGROUND_SERVICE)
-            if (foregroundPermission != PermissionChecker.PERMISSION_GRANTED) return false
-        }
-
-        clickerService?.startDumbScenario(scenario)
         return true
     }
 

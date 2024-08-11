@@ -26,10 +26,6 @@ import com.buzbuz.smartautoclicker.core.base.identifier.DATABASE_ID_INSERTION
 import com.buzbuz.smartautoclicker.core.base.identifier.Identifier
 import com.buzbuz.smartautoclicker.core.domain.IRepository
 import com.buzbuz.smartautoclicker.core.domain.model.scenario.Scenario
-import com.buzbuz.smartautoclicker.core.dumb.domain.IDumbRepository
-import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbScenario
-import com.buzbuz.smartautoclicker.feature.revenue.IRevenueRepository
-import com.buzbuz.smartautoclicker.feature.revenue.UserBillingState
 
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -46,9 +42,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ScenarioCreationViewModel @Inject constructor(
     @ApplicationContext context: Context,
-    revenueRepository: IRevenueRepository,
     private val smartRepository: IRepository,
-    private val dumbRepository: IDumbRepository,
 ) : ViewModel() {
 
     private val _name: MutableStateFlow<String?> =
@@ -62,10 +56,9 @@ class ScenarioCreationViewModel @Inject constructor(
     private val _selectedType: MutableStateFlow<ScenarioTypeSelection> =
         MutableStateFlow(ScenarioTypeSelection.SMART)
     val scenarioTypeSelectionState: Flow<ScenarioTypeSelectionState> =
-        combine(_selectedType, revenueRepository.userBillingState) { selectedType, billingState ->
+        combine(_selectedType) { selectedType ->
             ScenarioTypeSelectionState(
-                dumbItem = ScenarioTypeItem.Dumb,
-                smartItem = ScenarioTypeItem.Smart(isProModeEnabled = billingState == UserBillingState.PURCHASED),
+                smartItem = ScenarioTypeItem.Smart(),
                 selectedItem = selectedType,
             )
         }
@@ -92,26 +85,10 @@ class ScenarioCreationViewModel @Inject constructor(
         _creationState.value = CreationState.CREATING
         viewModelScope.launch(Dispatchers.IO) {
             when (_selectedType.value) {
-                ScenarioTypeSelection.DUMB -> createDumbScenario()
                 ScenarioTypeSelection.SMART -> createSmartScenario(context)
             }
             _creationState.value = CreationState.SAVED
         }
-    }
-
-    private suspend fun createDumbScenario() {
-        dumbRepository.addDumbScenario(
-            DumbScenario(
-                id = Identifier(databaseId = DATABASE_ID_INSERTION, tempId = 0L),
-                name = _name.value!!,
-                dumbActions = emptyList(),
-                repeatCount = 1,
-                isRepeatInfinite = false,
-                maxDurationMin = 1,
-                isDurationInfinite = true,
-                randomize = false,
-            )
-        )
     }
 
     private suspend fun createSmartScenario(context: Context) {
@@ -130,29 +107,20 @@ class ScenarioCreationViewModel @Inject constructor(
 
 
 data class ScenarioTypeSelectionState(
-    val dumbItem: ScenarioTypeItem.Dumb,
     val smartItem: ScenarioTypeItem.Smart,
-    val selectedItem: ScenarioTypeSelection,
+    val selectedItem: Array<ScenarioTypeSelection>,
 )
 
 sealed class ScenarioTypeItem(val titleRes: Int, val iconRes: Int, val descriptionText: Int) {
 
-    data object Dumb: ScenarioTypeItem(
-        titleRes = R.string.item_title_dumb_scenario,
-        iconRes = R.drawable.ic_dumb,
-        descriptionText = R.string.item_desc_dumb_scenario,
-    )
-
-    data class Smart(val isProModeEnabled: Boolean): ScenarioTypeItem(
+    class Smart: ScenarioTypeItem(
         titleRes = R.string.item_title_smart_scenario,
         iconRes = R.drawable.ic_smart,
         descriptionText =
-            if (isProModeEnabled) R.string.item_desc_smart_scenario_pro_mode
-            else R.string.item_desc_smart_scenario,
+            R.string.item_desc_smart_scenario_pro_mode
     )
 }
 enum class ScenarioTypeSelection {
-    DUMB,
     SMART,
 }
 

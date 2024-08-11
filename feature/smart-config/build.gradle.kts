@@ -52,7 +52,7 @@ dependencies {
     implementation(project(":core:common:ui"))
     implementation(project(":core:smart:domain"))
     implementation(project(":core:smart:processing"))
-    implementation(project(":feature:revenue"))
+//    implementation(project(":feature:revenue"))
     implementation(project(":feature:smart-debugging"))
-    implementation(project(":feature:tutorial"))
+    //implementation(project(":feature:tutorial"))
 }

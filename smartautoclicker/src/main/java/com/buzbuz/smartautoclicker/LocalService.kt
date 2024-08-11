@@ -26,15 +26,10 @@ import com.buzbuz.smartautoclicker.core.bitmaps.IBitmapManager
 import com.buzbuz.smartautoclicker.core.common.overlays.manager.OverlayManager
 import com.buzbuz.smartautoclicker.core.display.DisplayConfigManager
 import com.buzbuz.smartautoclicker.core.domain.model.scenario.Scenario
-import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbScenario
-import com.buzbuz.smartautoclicker.core.dumb.engine.DumbEngine
 import com.buzbuz.smartautoclicker.core.processing.domain.DetectionRepository
 import com.buzbuz.smartautoclicker.core.processing.domain.DetectionState
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.MainMenu
-import com.buzbuz.smartautoclicker.feature.dumb.config.ui.DumbMainMenu
 import com.buzbuz.smartautoclicker.feature.qstile.domain.QSTileRepository
-import com.buzbuz.smartautoclicker.feature.revenue.IRevenueRepository
-import com.buzbuz.smartautoclicker.feature.revenue.UserBillingState
 import com.buzbuz.smartautoclicker.feature.smart.debugging.domain.DebuggingRepository
 
 import kotlinx.coroutines.CoroutineScope
@@ -54,9 +49,7 @@ class LocalService(
     private val displayConfigManager: DisplayConfigManager,
     private val detectionRepository: DetectionRepository,
     private val bitmapManager: IBitmapManager,
-    private val dumbEngine: DumbEngine,
     private val tileRepository: QSTileRepository,
-    private val revenueRepository: IRevenueRepository,
     private val debugRepository: DebuggingRepository,
     private val androidExecutor: AndroidExecutor,
     private val onStart: (isSmart: Boolean, name: String) -> Unit,
@@ -68,8 +61,6 @@ class LocalService(
     private val serviceScope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     /** Coroutine job for the delayed start of engine & ui. */
     private var startJob: Job? = null
-    /** Coroutine job for the paywall result upon start from notification. */
-    private var paywallResultJob: Job? = null
 
     /** State of this LocalService. */
     private var state: LocalServiceState = LocalServiceState(isStarted = false, isSmartLoaded = false)
@@ -78,33 +69,10 @@ class LocalService(
         get() = state.isStarted
 
     init {
-        combine(dumbEngine.isRunning, detectionRepository.detectionState) { dumbIsRunning, smartState ->
-            dumbIsRunning || smartState == DetectionState.DETECTING
-        }.onEach { onStateChanged(it, overlayManager.isStackHidden()) }.launchIn(serviceScope)
-
         overlayManager.onVisibilityChangedListener = {
             onStateChanged(
-                dumbEngine.isRunning.value || detectionRepository.isRunning(),
+                detectionRepository.isRunning(),
                 overlayManager.isStackHidden()
-            )
-        }
-    }
-
-    override fun startDumbScenario(dumbScenario: DumbScenario) {
-        if (state.isStarted) return
-        state = LocalServiceState(isStarted = true, isSmartLoaded = false)
-        onStart(false, dumbScenario.name)
-
-        displayConfigManager.startMonitoring(context)
-        tileRepository.setTileScenario(scenarioId = dumbScenario.id.databaseId, isSmart = false)
-        startJob = serviceScope.launch {
-            delay(500)
-
-            dumbEngine.init(androidExecutor, dumbScenario)
-
-            overlayManager.navigateTo(
-                context = context,
-                newOverlay = DumbMainMenu(dumbScenario.id) { stop() },
             )
         }
     }
@@ -157,24 +125,9 @@ class LocalService(
             overlayManager.hideAll()
 
             if (state.isSmartLoaded && !detectionRepository.isRunning()) {
-                if (revenueRepository.userBillingState.value == UserBillingState.AD_REQUESTED) startPaywall()
-                else startSmartScenario()
-            } else if (!state.isSmartLoaded && !dumbEngine.isRunning.value) {
-                dumbEngine.startDumbScenario()
+                startSmartScenario()
             }
         }
-    }
-
-    private fun startPaywall() {
-        revenueRepository.startPaywallUiFlow(context)
-
-        paywallResultJob = combine(revenueRepository.isBillingFlowInProgress, revenueRepository.userBillingState) { inProgress, state ->
-            if (inProgress) return@combine
-
-            if (state != UserBillingState.AD_REQUESTED) startSmartScenario()
-            paywallResultJob?.cancel()
-            paywallResultJob = null
-        }.launchIn(serviceScope)
     }
 
     private fun startSmartScenario() {
@@ -182,7 +135,6 @@ class LocalService(
             detectionRepository.startDetection(
                 context,
                 debugRepository.getDebugDetectionListenerIfNeeded(context),
-                revenueRepository.consumeTrial(),
             )
         }
     }
@@ -190,7 +142,6 @@ class LocalService(
     override fun pauseAndShow() {
         serviceScope.launch {
             when {
-                dumbEngine.isRunning.value -> dumbEngine.stopDumbScenario()
                 detectionRepository.isRunning() -> detectionRepository.stopDetection()
             }
 
@@ -214,7 +165,6 @@ class LocalService(
             startJob?.join()
             startJob = null
 
-            dumbEngine.release()
             overlayManager.closeAll(context)
             detectionRepository.stopScreenRecord()
             displayConfigManager.stopMonitoring(context)

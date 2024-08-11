@@ -46,7 +46,7 @@ dependencies {
     implementation(project(":core:common:ui"))
     implementation(project(":core:smart:database"))
     implementation(project(":core:smart:domain"))
-    implementation(project(":core:dumb"))
+//    implementation(project(":core:dumb"))
 
     testImplementation(libs.kotlinx.coroutines.test)
 }
