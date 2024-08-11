@@ -1,0 +1,21 @@
+
+package com.buzbuz.taskengine.feature.smart.config.utils
+
+import com.buzbuz.taskengine.core.domain.model.AND
+import com.buzbuz.taskengine.core.domain.model.action.Action
+import com.buzbuz.taskengine.core.domain.model.event.ImageEvent
+
+internal fun Action.isValidInEvent(event: ImageEvent?): Boolean {
+    event ?: return false
+
+    return if (event.conditionOperator == AND && this is Action.Click && positionType == Action.Click.PositionType.ON_DETECTED_CONDITION) {
+        clickOnConditionId != null && isComplete()
+    } else isComplete()
+}
+
+internal fun Action.isClickOnCondition(): Boolean =
+    this is Action.Click && this.positionType == Action.Click.PositionType.ON_DETECTED_CONDITION
+
+/** Check if this list does not already contains the provided action */
+internal fun List<Action>.doesNotContainAction(action: Action): Boolean =
+    find { item -> item.id == action.id } == null

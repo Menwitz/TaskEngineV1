@@ -20,7 +20,7 @@ plugins {
 }
 
 android {
-    namespace = "com.buzbuz.smartautoclicker.feature.qstile"
+    namespace = "com.buzbuz.taskengine.feature.qstile"
     buildFeatures.viewBinding = true
 }
 

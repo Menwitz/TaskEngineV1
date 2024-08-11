@@ -20,7 +20,7 @@ plugins {
 }
 
 android {
-    namespace = "com.buzbuz.smartautoclicker.core.bitmaps"
+    namespace = "com.buzbuz.taskengine.core.bitmaps"
 }
 
 dependencies {

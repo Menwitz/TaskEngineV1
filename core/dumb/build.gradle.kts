@@ -22,7 +22,7 @@ plugins {
 }
 
 android {
-    namespace = "com.smartautoclicker.core.dumb"
+    namespace = "com.taskengine.core.dumb"
 
     sourceSets {
         getByName("test") {

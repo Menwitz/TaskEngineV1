@@ -22,7 +22,7 @@ plugins {
 }
 
 android {
-    namespace = "com.buzbuz.smartautoclicker.core.common.quality"
+    namespace = "com.buzbuz.taskengine.core.common.quality"
     buildFeatures.viewBinding = true
 }
 

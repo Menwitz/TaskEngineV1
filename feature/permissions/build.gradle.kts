@@ -20,7 +20,7 @@ plugins {
 }
 
 android {
-    namespace = "com.buzbuz.smartautoclicker.feature.permissions"
+    namespace = "com.buzbuz.taskengine.feature.permissions"
     buildFeatures.viewBinding = true
 }
 

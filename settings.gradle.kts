@@ -43,4 +43,4 @@ include(":feature:quick-settings-tile")
 include(":feature:smart-config")
 include(":feature:smart-debugging")
 
-include(":smartautoclicker")
+include(":app")
