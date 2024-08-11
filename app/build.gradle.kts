@@ -28,8 +28,8 @@ android {
     defaultConfig {
         applicationId = "com.buzbuz.taskengine"
 
-        versionCode = 46
-        versionName = "3.0.0-beta05"
+        versionCode = 1
+        versionName = "1.0.0"
     }
 
     flavorDimensions += listOf("version")
