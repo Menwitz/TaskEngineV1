@@ -125,12 +125,7 @@ class ScenarioCreationDialog : DialogFragment() {
 
     private fun updateTypeSelection(state: ScenarioTypeSelectionState) {
         viewBinding.apply {
-            scenarioTypeSmart.setState(state.smartItem, state.selectedItem, ScenarioTypeSelection.SMART)
-            scenarioTypeDescription.setText(
-                when (state.selectedItem) {
-                    ScenarioTypeSelection.SMART -> state.smartItem.descriptionText
-                }
-            )
+            //scenarioTypeSmart.setState(state.smartItem, state.selectedItem, ScenarioTypeSelection.SMART) //TODO fix later
         }
     }
 

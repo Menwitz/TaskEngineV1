@@ -41,13 +41,8 @@ import javax.inject.Singleton
     ],
     version = CLICK_DATABASE_VERSION,
     exportSchema = true,
-    autoMigrations = [
-        AutoMigration (from = 7, to = 8),
-        AutoMigration (from = 8, to = 9, spec = Migration8to9::class),
-        AutoMigration (from = 11, to = 12),
-    ]
 )
 abstract class ClickDatabase : ScenarioDatabase()
 
 /** Current version of the database. */
-const val CLICK_DATABASE_VERSION = 13
+const val CLICK_DATABASE_VERSION = 1

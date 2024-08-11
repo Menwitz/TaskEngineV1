@@ -109,12 +109,6 @@ class MainMenu(private val onStopClicked: () -> Unit) : OverlayMenu() {
         viewModel.loadAdIfNeeded(context)
 
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.CREATED) {
-                launch { viewModel.paywallIsVisible.collect(::updateVisibilityForPaywall) }
-            }
-        }
-
-        lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch { viewModel.canStartScenario.collect(::updatePlayPauseButtonEnabledState) }
                 launch { viewModel.detectionState.collect(::updateDetectionState) }
@@ -185,11 +179,6 @@ class MainMenu(private val onStopClicked: () -> Unit) : OverlayMenu() {
     }
 
     private fun onPlayPauseClicked() {
-        if (viewModel.shouldShowStopVolumeDownTutorialDialog()) {
-            showStopVolumeDownTutorialDialog()
-            return
-        }
-
         viewModel.toggleDetection(context)
     }
 
@@ -309,8 +298,7 @@ class MainMenu(private val onStopClicked: () -> Unit) : OverlayMenu() {
             }
             .create()
             .showAsOverlay()
-
-        viewModel.onStopVolumeDownTutorialDialogShown()
+        
     }
 
     private fun showNativeLibErrorDialogIfNeeded(haveError: Boolean) {

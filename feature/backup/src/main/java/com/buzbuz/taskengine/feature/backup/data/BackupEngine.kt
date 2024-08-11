@@ -7,8 +7,6 @@ import android.net.Uri
 import android.util.Log
 
 import com.buzbuz.taskengine.core.database.entity.CompleteScenario
-import com.buzbuz.taskengine.core.dumb.data.database.DumbScenarioWithActions
-import com.buzbuz.taskengine.feature.backup.data.dumb.DumbBackupDataSource
 import com.buzbuz.taskengine.feature.backup.data.smart.SmartBackupDataSource
 
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +20,6 @@ import java.util.zip.ZipOutputStream
 /** [BackupEngine] internal implementation. */
 internal class BackupEngine(appDataDir: File, private val contentResolver: ContentResolver) {
 
-    private val dumbBackupDataSource: DumbBackupDataSource = DumbBackupDataSource(appDataDir)
     private val smartBackupDataSource: SmartBackupDataSource = SmartBackupDataSource(appDataDir)
 
     /**
@@ -36,12 +33,10 @@ internal class BackupEngine(appDataDir: File, private val contentResolver: Conte
     suspend fun createBackup(
         zipFileUri: Uri,
         smartScenarios: List<CompleteScenario>,
-        dumbScenarios: List<DumbScenarioWithActions>,
         screenSize: Point,
         progress: BackupProgress,
     ) {
         Log.d(TAG, "Create backup: $zipFileUri for scenarios: $smartScenarios")
-        dumbBackupDataSource.reset()
         smartBackupDataSource.reset()
 
         var currentProgress = 0
@@ -51,14 +46,6 @@ internal class BackupEngine(appDataDir: File, private val contentResolver: Conte
         withContext(Dispatchers.IO) {
             try {
                 ZipOutputStream(contentResolver.openOutputStream(zipFileUri)).use { zipStream ->
-                    dumbScenarios.forEach { dumbScenario ->
-                        Log.d(TAG, "Backup dumb scenario ${dumbScenario.scenario.id}")
-
-                        dumbBackupDataSource.addScenarioToZipFile(zipStream, dumbScenario, screenSize)
-
-                        currentProgress++
-                        progress.onProgressChanged(currentProgress, smartScenarios.size)
-                    }
 
                     smartScenarios.forEach { completeScenario ->
                         Log.d(TAG, "Backup smart scenario ${completeScenario.scenario.id}")
@@ -69,7 +56,7 @@ internal class BackupEngine(appDataDir: File, private val contentResolver: Conte
                         progress.onProgressChanged(currentProgress, smartScenarios.size)
                     }
 
-                    progress.onCompleted(dumbScenarios, smartScenarios, 0, false)
+                    progress.onCompleted(smartScenarios, 0, false)
                 }
             } catch (ioEx: IOException) {
                 Log.e(TAG, "Error while creating backup archive.")
@@ -87,7 +74,6 @@ internal class BackupEngine(appDataDir: File, private val contentResolver: Conte
      */
     suspend fun loadBackup(zipFileUri: Uri, screenSize: Point, progress: BackupProgress) {
         Log.d(TAG, "Load backup: $zipFileUri")
-        dumbBackupDataSource.reset()
         smartBackupDataSource.reset()
 
         var currentProgress = 0
@@ -102,12 +88,6 @@ internal class BackupEngine(appDataDir: File, private val contentResolver: Conte
 
                             Log.d(TAG, "Extracting file ${zipEntry.name}")
                             when {
-                                dumbBackupDataSource.extractFromZip(zipStream, zipEntry.name) -> {
-                                    Log.d(TAG, "Dumb scenario file ${zipEntry.name} extracted.")
-
-                                    currentProgress++
-                                    progress.onProgressChanged(currentProgress, null)
-                                }
 
                                 smartBackupDataSource.extractFromZip(zipStream, zipEntry.name) -> {
                                     if (smartBackupDataSource.isScenarioBackupFileZipEntry(zipEntry.name)) {
@@ -124,13 +104,11 @@ internal class BackupEngine(appDataDir: File, private val contentResolver: Conte
                 }
 
                 progress.onVerification?.invoke()
-                dumbBackupDataSource.verifyExtractedScenarios(screenSize)
                 smartBackupDataSource.verifyExtractedScenarios(screenSize)
 
                 progress.onCompleted(
-                    dumbBackupDataSource.validBackups,
                     smartBackupDataSource.validBackups,
-                    dumbBackupDataSource.failureCount + smartBackupDataSource.failureCount,
+                    smartBackupDataSource.failureCount,
                     smartBackupDataSource.screenCompatWarning,
                 )
             } catch (ioEx: IOException) {

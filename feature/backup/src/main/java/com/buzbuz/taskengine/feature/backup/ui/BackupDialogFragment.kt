@@ -108,7 +108,7 @@ class BackupDialogFragment : DialogFragment() {
         backupActivityResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == AppCompatActivity.RESULT_OK) {
                 result.data?.data?.also { uri ->
-                    backupViewModel.startBackup(requireContext(), uri, isImport, exportDumbScenarios, exportSmartScenarios)
+                    backupViewModel.startBackup(requireContext(), uri, isImport, exportSmartScenarios)
                 }
             }
         }

@@ -74,7 +74,6 @@ class BackupViewModel @Inject constructor(
         context: Context,
         uri: Uri,
         isImport: Boolean,
-        dumbScenarios: List<Long> = emptyList(),
         smartScenarios: List<Long> = emptyList(),
     ) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -83,7 +82,7 @@ class BackupViewModel @Inject constructor(
                     updateBackupState(context, backup, true)
                 }
             } else {
-                repository.createScenarioBackup(uri, dumbScenarios, smartScenarios, displayConfigManager.displayConfig.sizePx).collect { backup ->
+                repository.createScenarioBackup(uri, smartScenarios, displayConfigManager.displayConfig.sizePx).collect { backup ->
                     updateBackupState(context, backup, false)
                 }
             }

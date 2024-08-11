@@ -1,19 +1,4 @@
-/*
- * Copyright (C) 2024 Kevin Buzeau
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+
 package com.buzbuz.taskengine.feature.backup.domain
 
 import android.content.Context
@@ -22,8 +7,6 @@ import android.net.Uri
 
 import com.buzbuz.taskengine.core.database.ClickDatabase
 import com.buzbuz.taskengine.core.domain.IRepository
-import com.buzbuz.taskengine.core.dumb.data.database.DumbDatabase
-import com.buzbuz.taskengine.core.dumb.domain.IDumbRepository
 import com.buzbuz.taskengine.feature.backup.data.BackupEngine
 import com.buzbuz.taskengine.feature.backup.data.BackupProgress
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -36,8 +19,6 @@ import javax.inject.Singleton
 @Singleton
 class BackupRepository @Inject constructor(
     @ApplicationContext context: Context,
-    private val dumbDatabase: DumbDatabase,
-    private val dumbRepository: IDumbRepository,
     private val smartDatabase: ClickDatabase,
     private val smartRepository: IRepository,
 ) {
@@ -59,16 +40,12 @@ class BackupRepository @Inject constructor(
      */
     fun createScenarioBackup(
         zipFileUri: Uri,
-        dumbScenarios: List<Long>,
         smartScenarios: List<Long>,
         screenSize: Point,
     ) = channelFlow {
         launch {
             backupEngine.createBackup(
                 zipFileUri = zipFileUri,
-                dumbScenarios = dumbScenarios.mapNotNull {
-                    dumbDatabase.dumbScenarioDao().getDumbScenariosWithAction(it)
-                },
                 smartScenarios = smartScenarios.mapNotNull {
                     smartDatabase.scenarioDao().getCompleteScenario(it)
                 },
@@ -76,9 +53,9 @@ class BackupRepository @Inject constructor(
                 progress = BackupProgress(
                     onError = { send(Backup.Error) },
                     onProgressChanged = { current, max -> send(Backup.Loading(current, max)) },
-                    onCompleted = { dumbs, smarts, failureCount, compatWarning ->
+                    onCompleted = { smarts, failureCount, compatWarning ->
                         send(Backup.Completed(
-                            successCount = dumbs.size + smarts.size,
+                            successCount = smarts.size,
                             failureCount = failureCount,
                             compatWarning = compatWarning,
                         ))
@@ -105,16 +82,8 @@ class BackupRepository @Inject constructor(
                     onError = { send(Backup.Error) },
                     onProgressChanged = { current, max -> send(Backup.Loading(current, max)) },
                     onVerification = { send(Backup.Verification) },
-                    onCompleted = { dumbs, smarts, failureCount, compatWarning ->
+                    onCompleted = { smarts, failureCount, compatWarning ->
                         var totalFailures = failureCount
-
-                        val dumbsSuccess = dumbs.toMutableList()
-                        dumbs.forEach { completeScenario ->
-                            if (dumbRepository.addDumbScenarioCopy(completeScenario) == null) {
-                                dumbsSuccess.remove(completeScenario)
-                                totalFailures++
-                            }
-                        }
 
                         val smartsSuccess = smarts.toMutableList()
                         smarts.forEach { completeScenario ->
@@ -125,7 +94,7 @@ class BackupRepository @Inject constructor(
                         }
 
                         send(Backup.Completed(
-                            successCount = dumbsSuccess.size + smartsSuccess.size,
+                            successCount = smartsSuccess.size,
                             failureCount = totalFailures,
                             compatWarning = compatWarning,
                         ))

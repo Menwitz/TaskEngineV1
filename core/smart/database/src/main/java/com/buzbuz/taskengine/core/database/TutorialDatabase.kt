@@ -42,9 +42,7 @@ import javax.inject.Singleton
     ],
     version = TUTORIAL_DATABASE_VERSION,
     exportSchema = true,
-    autoMigrations = [
-        AutoMigration (from = 11, to = 12),
-    ]
+
 )
 abstract class TutorialDatabase : ScenarioDatabase() {
 
