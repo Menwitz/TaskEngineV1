@@ -134,7 +134,13 @@ class MainMenu(private val onStopClicked: () -> Unit) : OverlayMenu(theme = R.st
             R.id.btn_play -> onPlayPauseClicked()
             R.id.btn_click_list -> onConfigureClicked()
             R.id.btn_stop -> onStopClicked()
+            R.id.btn_explore -> onExploreClicked()
         }
+    }
+
+    private fun onExploreClicked() {
+        val intent = android.content.Intent("com.buzbuz.smartautoclicker.agent.TOGGLE_EXPLORATION")
+        context.sendBroadcast(intent)
     }
 
     override fun getWindowMaximumSize(backgroundView: ViewGroup): Size {

@@ -444,16 +444,17 @@ class SmartAutoClickerService : AccessibilityService(), SmartActionExecutor {
     private fun toggleExploration() {
         if (explorationJob?.isActive == true) {
             Log.i(TAG, "Stopping Exploration...")
+            android.widget.Toast.makeText(this, "Agent: Exploration Stopped", android.widget.Toast.LENGTH_SHORT).show()
             explorationJob?.cancel()
             explorationJob = null
-            // Optional: Notify user
         } else {
             Log.i(TAG, "Starting Exploration...")
+            android.widget.Toast.makeText(this, "Agent: Exploration Started", android.widget.Toast.LENGTH_SHORT).show()
             explorationJob = serviceScope.launch {
                 val dm = resources.displayMetrics
                 val width = dm.widthPixels
                 val height = dm.heightPixels
-                
+
                 explorationService?.startExploration(
                     rootProvider = { rootInActiveWindow },
                     screenMetrics = Pair(width, height)

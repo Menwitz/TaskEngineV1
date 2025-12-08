@@ -63,6 +63,15 @@
                     android:contentDescription="@string/content_desc_stop_clicker" />
 
                 <ImageButton
+                    android:id="@+id/btn_explore"
+                    style="@style/AppTheme.Overlay.FloatingMenu.Buttons"
+                    android:layout_width="@dimen/image_button_size"
+                    android:layout_height="@dimen/image_button_size"
+                    android:src="@drawable/ic_logo_tapt"
+                    android:scaleType="fitCenter"
+                    android:contentDescription="@string/content_desc_explore" />
+
+                <ImageButton
                     android:id="@+id/btn_click_list"
                     style="@style/AppTheme.Overlay.FloatingMenu.Buttons"
                     android:layout_width="@dimen/image_button_size"
