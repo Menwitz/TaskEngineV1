@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -47,15 +48,7 @@ class MainMenuModel @Inject constructor(
 
 
 
-    /** The current of the detection. */
-    val detectionState: StateFlow<UiState> = detectionRepository.detectionState
-        .map { if (it == DetectionState.DETECTING) UiState.Detecting else UiState.Idle }
-        .distinctUntilChanged()
-        .stateIn(
-            viewModelScope,
-            SharingStarted.Eagerly,
-            UiState.Idle,
-        )
+
 
     val isMediaProjectionStarted: StateFlow<Boolean> = detectionRepository.detectionState
         .map { it == DetectionState.RECORDING || it == DetectionState.DETECTING }
@@ -75,21 +68,61 @@ class MainMenuModel @Inject constructor(
         .map { it == DetectionState.ERROR_NO_NATIVE_LIB }
         .distinctUntilChanged()
 
+    private val _showAgentPrompt = kotlinx.coroutines.flow.MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    val showAgentPrompt: Flow<Unit> = _showAgentPrompt
+
+    /** Combined state of Detection OR Agent Running */
+    val detectionState: StateFlow<UiState> = combine(
+        detectionRepository.detectionState,
+        detectionRepository.isAgentRunning
+    ) { detState, isAgent ->
+        when {
+            isAgent -> UiState.Detecting
+            detState == DetectionState.DETECTING -> UiState.Detecting
+            else -> UiState.Idle
+        }
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.Eagerly,
+        UiState.Idle,
+    )
+
     /** Start/Stop the detection. */
     fun toggleDetection(context: Context) {
-        when (detectionState.value) {
-            UiState.Detecting -> stopDetection()
-            UiState.Idle -> {
-                startDetection(context)
+        viewModelScope.launch {
+            if (detectionRepository.isAgentRunning.first()) {
+                detectionRepository.stopAgent()
+                return@launch
+            }
+            
+            when (detectionState.value) {
+                UiState.Detecting -> stopDetection()
+                UiState.Idle -> {
+                    if (scenarioDbId.value == -1L) {
+                         _showAgentPrompt.tryEmit(Unit)
+                    } else {
+                        startDetection(context)
+                    }
+                }
             }
         }
     }
 
     /** Stop the detection. Returns true if it was started, false if not. */
     fun stopDetection(): Boolean {
+        // Stop Agent if running
+        // Note: checking synchronous value is hard with Flow, launching coroutine.
+        // But for "Back Key" handling, we need immediate return.
+        // We rely on detectionState.value which is StateFlow.
+        
         if (detectionState.value !is UiState.Detecting) return false
 
-        detectionRepository.stopDetection()
+        // We trigger both stops to be safe, or check flow?
+        // Let's just blindly stop both.
+        viewModelScope.launch {
+            detectionRepository.stopAgent()
+            detectionRepository.stopDetection() // This is synchronous in Repo usually?
+        }
         return true
     }
 
@@ -97,6 +130,10 @@ class MainMenuModel @Inject constructor(
         viewModelScope.launch {
             detectionRepository.startDetection(context, progressListener = null)
         }
+    }
+    
+    fun startAgent(goal: String) {
+        detectionRepository.startAgent(goal)
     }
 
     fun startScenarioEdition(onEditionStarted: () -> Unit) {

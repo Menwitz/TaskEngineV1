@@ -82,6 +82,7 @@ class MainMenu(private val onStopClicked: () -> Unit) : OverlayMenu(theme = R.st
                 launch { viewModel.isMediaProjectionStarted.collect(::updateProjectionErrorBadge) }
                 launch { viewModel.detectionState.collect(::updateDetectionState) }
                 launch { viewModel.nativeLibError.collect(::showNativeLibErrorDialogIfNeeded) }
+                launch { viewModel.showAgentPrompt.collect { showAgentDialog() } }
             }
         }
     }
@@ -134,31 +135,23 @@ class MainMenu(private val onStopClicked: () -> Unit) : OverlayMenu(theme = R.st
             R.id.btn_play -> onPlayPauseClicked()
             R.id.btn_click_list -> onConfigureClicked()
             R.id.btn_stop -> onStopClicked()
-            R.id.btn_explore -> onExploreClicked()
-            R.id.btn_brain -> onBrainClicked()
         }
     }
 
-    private fun onBrainClicked() {
-        android.util.Log.i("MainMenu", "Brain button clicked")
+    private fun showAgentDialog() {
+        android.util.Log.i("MainMenu", "Showing Agent Prompt")
         
         val input = android.widget.EditText(context).apply {
              hint = "e.g. Open Settings and turn on Dark Mode"
         }
         
         MaterialAlertDialogBuilder(context.getDynamicColorsContext(R.style.AppTheme))
-            .setTitle("Tapt Brain 🧠")
+            .setTitle("Tapt Agent 🧠")
             .setView(input)
             .setPositiveButton("Go") { _, _ ->
                 val goal = input.text.toString()
                 if (goal.isNotBlank()) {
-                    // Send Broadcast to Service
-                    val json = org.json.JSONObject().put("goal", goal).toString()
-                    val intent = android.content.Intent("com.buzbuz.smartautoclicker.agent.EXECUTE_TASK").apply {
-                        setPackage(context.packageName)
-                        putExtra("json_task", json)
-                    }
-                    context.sendBroadcast(intent)
+                    viewModel.startAgent(goal)
                 }
             }
             .setNegativeButton("Cancel", null)
@@ -166,13 +159,7 @@ class MainMenu(private val onStopClicked: () -> Unit) : OverlayMenu(theme = R.st
             .showAsOverlay()
     }
 
-    private fun onExploreClicked() {
-        android.util.Log.i("MainMenu", "Explore button clicked in MainMenu")
-        val intent = android.content.Intent("com.buzbuz.smartautoclicker.agent.TOGGLE_EXPLORATION").apply {
-            setPackage(context.packageName)
-        }
-        context.sendBroadcast(intent)
-    }
+
 
     override fun getWindowMaximumSize(backgroundView: ViewGroup): Size {
         return super.getWindowMaximumSize(backgroundView)

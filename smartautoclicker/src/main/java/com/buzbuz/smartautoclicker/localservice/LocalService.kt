@@ -42,6 +42,9 @@ class LocalService(
     private val androidExecutor: SmartActionExecutor,
     private val onStart: (scenarioId: Long, isSmart: Boolean, foregroundNotification: Notification?) -> Unit,
     private val onStop: () -> Unit,
+    private val onStartAgent: (String) -> Unit,
+    private val onStopAgent: () -> Unit,
+    override val agentState: kotlinx.coroutines.flow.Flow<Boolean>,
     private val notificationId: Int,
 ) : ILocalService {
 
@@ -146,6 +149,16 @@ class LocalService(
 
     override fun release() {
         serviceScope.cancel()
+    }
+    
+    override fun startAgent(goal: String) {
+        if (!isStarted) return
+        onStartAgent(goal)
+    }
+
+    override fun stopAgent() {
+        if (!isStarted) return
+        onStopAgent()
     }
 
     internal fun onKeyEvent(event: KeyEvent?): Boolean {

@@ -41,6 +41,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.launch
 
 import java.io.PrintWriter
@@ -64,6 +65,15 @@ class DetectionRepository @Inject constructor(
 
     /** Interacts with the OS to execute the actions */
     private var actionExecutor: SmartActionExecutor? = null
+    
+    /** Interface for controlling the Autonomous Agent. */
+    interface AgentController {
+        fun startAgent(goal: String)
+        fun stopAgent()
+        val isAgentRunning: Flow<Boolean>
+    }
+    
+    private var agentController: AgentController? = null
 
     private var projectionErrorHandler: (() -> Unit)? = null
 
@@ -106,6 +116,10 @@ class DetectionRepository @Inject constructor(
     fun setExecutor(androidExecutor: SmartActionExecutor) {
         actionExecutor = androidExecutor
     }
+    
+    fun setAgentController(controller: AgentController?) {
+        agentController = controller
+    }
 
     fun setProjectionErrorHandler(handler: () -> Unit) {
         projectionErrorHandler = handler
@@ -115,6 +129,26 @@ class DetectionRepository @Inject constructor(
 
     fun isRunning(): Boolean =
         detectorEngine.state.value == DetectorState.DETECTING
+        
+    val isAgentRunning: Flow<Boolean> = kotlinx.coroutines.flow.flow {
+        emit(false) // Initial value
+        agentController?.let { emitAll(it.isAgentRunning) }
+    }.flatMapLatest { 
+        agentController?.isAgentRunning ?: kotlinx.coroutines.flow.flowOf(false) 
+    }
+
+    // Simplification: We need a Stable flow. 
+    // The above flatMapLatest might be tricky if agentController changes.
+    // Let's use a wrapper flow or just expose a function/variable that update UI manually?
+    // Better: Helper function
+    
+    fun startAgent(goal: String) {
+        agentController?.startAgent(goal)
+    }
+    
+    fun stopAgent() {
+        agentController?.stopAgent()
+    }
 
     fun startScreenRecord(resultCode: Int, data: Intent) {
         actionExecutor?.let { executor ->

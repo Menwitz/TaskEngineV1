@@ -74,7 +74,7 @@ import com.buzbuz.smartautoclicker.core.agent.exploration.ExplorationService
  */
 
 @AndroidEntryPoint
-class SmartAutoClickerService : AccessibilityService(), SmartActionExecutor {
+class SmartAutoClickerService : AccessibilityService(), SmartActionExecutor, DetectionRepository.AgentController {
 
     private val localServiceProvider = LocalServiceProvider
 
@@ -98,6 +98,10 @@ class SmartAutoClickerService : AccessibilityService(), SmartActionExecutor {
     private var explorationService: ExplorationService? = null
     private var explorationJob: Job? = null
     private val serviceScope = CoroutineScope(Dispatchers.Main)
+    
+    // Agent State
+    private val _agentState = kotlinx.coroutines.flow.MutableStateFlow(false)
+    val agentState: kotlinx.coroutines.flow.Flow<Boolean> = _agentState
 
     override fun onServiceConnected() {
         super.onServiceConnected()
@@ -107,6 +111,7 @@ class SmartAutoClickerService : AccessibilityService(), SmartActionExecutor {
 
         // Initialize Agent Components
         setupAgent()
+        detectionRepository.setAgentController(this)
 
 
         localServiceProvider.setLocalService(
@@ -118,10 +123,17 @@ class SmartAutoClickerService : AccessibilityService(), SmartActionExecutor {
                 androidExecutor = this,
                 onStart = ::onLocalServiceStarted,
                 onStop = ::onLocalServiceStopped,
+                onStartAgent = ::startAgentTask,
+                onStopAgent = ::stopAgentTask,
+                agentState = agentState,
                 notificationId = FOREGROUND_NOTIFICATION_ID,
             )
         )
     }
+
+    override fun startAgent(goal: String) = startAgentTask(goal)
+    override fun stopAgent() = stopAgentTask()
+    override val isAgentRunning: kotlinx.coroutines.flow.Flow<Boolean> get() = agentState
 
     override fun onUnbind(intent: Intent?): Boolean {
         localServiceProvider.localServiceInstance?.apply {
@@ -129,6 +141,7 @@ class SmartAutoClickerService : AccessibilityService(), SmartActionExecutor {
             release()
         }
         localServiceProvider.setLocalService(null)
+        detectionRepository.setAgentController(null) // Unregister
 
         // Cleanup Agent
         if (remoteCommandReceiver != null) {
@@ -178,16 +191,33 @@ class SmartAutoClickerService : AccessibilityService(), SmartActionExecutor {
         )
     }
 
+    private var agentJob: Job? = null
+
     private fun startAgentTask(goal: String) {
         Log.i(TAG, "Starting Agent Task: $goal")
-        serviceScope.launch {
-            val dm = resources.displayMetrics
-            agentLoop?.runTask(
-                goal = goal,
-                rootProvider = { rootInActiveWindow },
-                screenMetrics = dm.widthPixels to dm.heightPixels
-            )
+        
+        agentJob?.cancel() // Cancel previous if any
+        
+        agentJob = serviceScope.launch {
+            _agentState.value = true
+            try {
+                val dm = resources.displayMetrics
+                agentLoop?.runTask(
+                    goal = goal,
+                    rootProvider = { rootInActiveWindow },
+                    screenMetrics = dm.widthPixels to dm.heightPixels
+                )
+            } finally {
+                _agentState.value = false
+                Log.i(TAG, "Agent Task Finished/Stopped")
+            }
         }
+    }
+
+    private fun stopAgentTask() {
+        Log.i(TAG, "Stopping Agent Task")
+        agentJob?.cancel()
+        agentJob = null
     }
 
     private fun onLocalServiceStarted(scenarioId: Long, isSmart: Boolean, serviceNotification: Notification?) {
