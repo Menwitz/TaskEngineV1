@@ -46,6 +46,12 @@
                 android:src="@drawable/ic_gesture_record" />
 
             <ImageButton
+                android:id="@+id/btn_explore"
+                style="@style/AppTheme.Overlay.FloatingMenu.Buttons"
+                android:src="@drawable/ic_logo_tapt"
+                android:contentDescription="@string/content_desc_explore" />
+
+            <ImageButton
                 android:id="@+id/btn_add_other"
                 style="@style/AppTheme.Overlay.FloatingMenu.Buttons"
                 android:src="@drawable/ic_add" />

@@ -117,6 +117,7 @@ class SmartActionsBriefMenu(initialItemIndex: Int) : ItemBriefMenu(
         when (viewId) {
             R.id.btn_back -> onBackClicked()
             R.id.btn_record -> onRecordClicked()
+            R.id.btn_explore -> onExploreClicked()
             R.id.btn_add_other -> showNewActionDialog()
         }
     }
@@ -124,6 +125,7 @@ class SmartActionsBriefMenu(initialItemIndex: Int) : ItemBriefMenu(
     override fun onScreenOverlayVisibilityChanged(isVisible: Boolean) {
         super.onScreenOverlayVisibilityChanged(isVisible)
         setMenuItemViewEnabled(viewBinding.btnRecord, isVisible)
+        setMenuItemViewEnabled(viewBinding.btnExplore, isVisible)
     }
 
     override fun onMoveItemClicked(from: Int, to: Int) {
@@ -166,6 +168,10 @@ class SmartActionsBriefMenu(initialItemIndex: Int) : ItemBriefMenu(
         }
     }
 
+    private fun onExploreClicked() {
+        viewModel.toggleExploration(context)
+    }
+
     override fun onFocusedItemChanged(index: Int) {
         super.onFocusedItemChanged(index)
         viewModel.setFocusedActionIndex(index)
@@ -178,12 +184,14 @@ class SmartActionsBriefMenu(initialItemIndex: Int) : ItemBriefMenu(
             setMenuItemViewEnabled(viewBinding.btnHideOverlay, false)
             setMenuItemViewEnabled(viewBinding.btnMove, true)
             setMenuItemViewEnabled(viewBinding.btnRecord, false)
+            setMenuItemViewEnabled(viewBinding.btnExplore, false)
         } else {
             setMenuItemViewEnabled(viewBinding.btnBack, true)
             setMenuItemViewEnabled(viewBinding.btnAddOther, true)
             setMenuItemViewEnabled(viewBinding.btnHideOverlay, true)
             setMenuItemViewEnabled(viewBinding.btnMove, true)
             setMenuItemViewEnabled(viewBinding.btnRecord, true)
+            setMenuItemViewEnabled(viewBinding.btnExplore, true)
         }
     }
 
@@ -194,6 +202,7 @@ class SmartActionsBriefMenu(initialItemIndex: Int) : ItemBriefMenu(
         setMenuItemViewEnabled(viewBinding.btnHideOverlay, !isReplaying)
         setMenuItemViewEnabled(viewBinding.btnMove, !isReplaying)
         setMenuItemViewEnabled(viewBinding.btnRecord, !isReplaying)
+        setMenuItemViewEnabled(viewBinding.btnExplore, !isReplaying)
     }
 
     private fun updateActionVisualisation(visualization: ItemBriefDescription?) {

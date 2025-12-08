@@ -16,8 +16,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <resources>
-    <color name="primary">#4CAF50</color>
-    <color name="accent">#448AFF</color>
+    <color name="primary">#7B61FF</color>
+    <color name="accent">#00F0FF</color>
 
     <color name="textTitle">#FFFFFF</color>
     <color name="textHint">#88FFFFFF</color>
@@ -31,6 +31,7 @@
     <color name="overlayClickSelectorBackground">#77000000</color>
     <color name="overlayActionsBriefBackground">#99000000</color>
     <color name="overlayGestureRecorder">#FFF00006</color>
+    <color name="glassSurface">#E61C1736</color> <!-- 90% opacity deep violet -->
 
     <color name="iconColor">@color/md_theme_light_onPrimaryContainer</color>
 

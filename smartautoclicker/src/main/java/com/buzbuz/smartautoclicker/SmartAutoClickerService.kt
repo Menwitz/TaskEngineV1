@@ -50,6 +50,7 @@ import android.content.IntentFilter
 import androidx.lifecycle.LifecycleCoroutineScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import com.buzbuz.smartautoclicker.core.agent.AgentLoop
 import com.buzbuz.smartautoclicker.core.agent.action.AgentActionExecutor
@@ -94,6 +95,8 @@ class SmartAutoClickerService : AccessibilityService(), SmartActionExecutor {
     // Agent Components
     private var remoteCommandReceiver: RemoteCommandReceiver? = null
     private var agentLoop: AgentLoop? = null
+    private var explorationService: ExplorationService? = null
+    private var explorationJob: Job? = null
     private val serviceScope = CoroutineScope(Dispatchers.Main)
 
     override fun onServiceConnected() {
@@ -141,10 +144,14 @@ class SmartAutoClickerService : AccessibilityService(), SmartActionExecutor {
 
     private fun setupAgent() {
         // Wire up the Remote Command Receiver
-        remoteCommandReceiver = RemoteCommandReceiver { goal ->
-             startAgentTask(goal) 
+        remoteCommandReceiver = RemoteCommandReceiver(
+            onTaskReceived = { goal -> startAgentTask(goal) },
+            onToggleExploration = { toggleExploration() }
+        )
+        val filter = IntentFilter().apply {
+            addAction(RemoteCommandReceiver.ACTION_EXECUTE_TASK)
+            addAction(RemoteCommandReceiver.ACTION_TOGGLE_EXPLORATION)
         }
-        val filter = IntentFilter(RemoteCommandReceiver.ACTION_EXECUTE_TASK)
         registerReceiver(remoteCommandReceiver, filter, RECEIVER_EXPORTED) // Needs export for ADB
 
         // Prepare the Loop (Brain + Hands + Eyes)
@@ -159,9 +166,9 @@ class SmartAutoClickerService : AccessibilityService(), SmartActionExecutor {
         val actionExecutor = AgentActionExecutor(this) // 'this' implements SmartActionExecutor
         // Note: accessibilityParser is already instantiated
         
-        // Exploration Service (Optional for now)
+        // Exploration Service
         val navigation = com.buzbuz.smartautoclicker.core.agent.memory.NavigationGraph()
-        val explorer = ExplorationService(accessibilityParser, actionExecutor, navigation)
+        explorationService = ExplorationService(accessibilityParser, actionExecutor, navigation)
 
         agentLoop = AgentLoop(
             parser = accessibilityParser,
@@ -434,6 +441,26 @@ class SmartAutoClickerService : AccessibilityService(), SmartActionExecutor {
 
     override fun onInterrupt() { /* Unused */ }
     override fun onAccessibilityEvent(event: AccessibilityEvent?) { /* Unused */ }
+    private fun toggleExploration() {
+        if (explorationJob?.isActive == true) {
+            Log.i(TAG, "Stopping Exploration...")
+            explorationJob?.cancel()
+            explorationJob = null
+            // Optional: Notify user
+        } else {
+            Log.i(TAG, "Starting Exploration...")
+            explorationJob = serviceScope.launch {
+                val dm = resources.displayMetrics
+                val width = dm.widthPixels
+                val height = dm.heightPixels
+                
+                explorationService?.startExploration(
+                    rootProvider = { rootInActiveWindow },
+                    screenMetrics = Pair(width, height)
+                )
+            }
+        }
+    }
 }
 
 /** Tag for the logs. */

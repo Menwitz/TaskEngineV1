@@ -161,6 +161,8 @@
     <string name="label_pick_target">Pick target</string>
     <string name="label_position_type">Position type</string>
     <string name="label_on_detected_condition">On detected condition</string>
+    <string name="content_desc_move_menu">Move Menu</string>
+    <string name="content_desc_explore">Start Autonomous Exploration</string>
     <string name="label_user_selected">User selected</string>
 
 </resources>

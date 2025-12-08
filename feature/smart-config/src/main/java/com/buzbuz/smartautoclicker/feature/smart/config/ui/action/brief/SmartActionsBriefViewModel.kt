@@ -338,6 +338,11 @@ class SmartActionsBriefViewModel @Inject constructor(
             ?.find { it.id == onConditionId }
             ?.let { condition -> bitmapRepository.getConditionBitmap(condition) }
     }
+
+    fun toggleExploration(context: Context) {
+        val intent = android.content.Intent("com.buzbuz.smartautoclicker.agent.TOGGLE_EXPLORATION")
+        context.sendBroadcast(intent)
+    }
 }
 
 private data class BriefVisualizationState(
