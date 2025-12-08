@@ -56,7 +56,7 @@ class ScenarioViewModel @Inject constructor(
     private val notificationManager: NotificationManager?
 
     init {
-        LocalServiceProvider.getLocalService(serviceConnection)
+        LocalServiceProvider.register(serviceConnection)
 
         notificationManager =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
@@ -65,7 +65,7 @@ class ScenarioViewModel @Inject constructor(
     }
 
     override fun onCleared() {
-        LocalServiceProvider.getLocalService(null)
+        LocalServiceProvider.unregister(serviceConnection)
         super.onCleared()
     }
 
@@ -110,6 +110,11 @@ class ScenarioViewModel @Inject constructor(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             val foregroundPermission = PermissionChecker.checkSelfPermission(context, Manifest.permission.FOREGROUND_SERVICE)
             if (foregroundPermission != PermissionChecker.PERMISSION_GRANTED) return false
+        }
+
+        if (clickerService == null) {
+            android.util.Log.e("ScenarioViewModel", "clickerService is null, cannot start scenario")
+            return false
         }
 
         clickerService?.startSmartScenario(resultCode, data, scenario)

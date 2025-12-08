@@ -3,31 +3,32 @@ package com.buzbuz.smartautoclicker.localservice
 
 object LocalServiceProvider {
 
+    /** List of callbacks to notify state changes. */
+    private val callbacks = mutableListOf<(ILocalService?) -> Unit>()
+
     /** The instance of the [ILocalService], providing access for this service to the Activity. */
     var localServiceInstance: ILocalService? = null
-        private set(value) {
-            field = value
-            localServiceCallback?.invoke(field)
-        }
-    /** Callback upon the availability of the [localServiceInstance]. */
-    private var localServiceCallback: ((ILocalService?) -> Unit)? = null
         set(value) {
             field = value
-            value?.invoke(localServiceInstance)
+            callbacks.forEach { it.invoke(field) }
         }
 
     fun setLocalService(service: ILocalService?) {
         localServiceInstance = service
     }
+
     /**
-     * Static method allowing an activity to register a callback in order to monitor the availability of the
-     * [ILocalService]. If the service is already available upon registration, the callback will be immediately
-     * called.
-     *
-     * @param stateCallback the object to be notified upon service availability.
+     * Register a callback to monitor the availability of the [ILocalService].
+     * If the service is already available, the callback will be immediately called.
      */
-    fun getLocalService(stateCallback: ((ILocalService?) -> Unit)?) {
-        localServiceCallback = stateCallback
+    fun register(callback: (ILocalService?) -> Unit) {
+        callbacks.add(callback)
+        callback(localServiceInstance)
+    }
+
+    /** Unregister a callback. */
+    fun unregister(callback: (ILocalService?) -> Unit) {
+        callbacks.remove(callback)
     }
 
     fun isServiceStarted(): Boolean = localServiceInstance != null
