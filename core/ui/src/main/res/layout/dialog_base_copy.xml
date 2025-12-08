@@ -14,7 +14,9 @@
         android:orientation="vertical">
 
         <include layout="@layout/include_dialog_search_top_bar"
-            android:id="@+id/layout_top_bar" />
+            android:id="@+id/layout_top_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
         <include layout="@layout/include_loadable_list"
             android:id="@+id/layout_loadable_list"
