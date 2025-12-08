@@ -20,6 +20,7 @@ import com.buzbuz.smartautoclicker.scenarios.list.model.ScenarioListUiState
 import com.buzbuz.smartautoclicker.core.display.recorder.showMediaProjectionWarning
 import com.buzbuz.smartautoclicker.core.domain.model.scenario.Scenario
 import com.buzbuz.smartautoclicker.scenarios.viewmodel.ScenarioViewModel
+import com.buzbuz.smartautoclicker.core.base.identifier.Identifier
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -52,7 +53,19 @@ class ScenarioActivity : AppCompatActivity(), ScenarioListFragment.Listener {
             if (result.resultCode != RESULT_OK) {
                 Toast.makeText(this, R.string.toast_denied_screen_sharing_permission, Toast.LENGTH_SHORT).show()
             } else {
-                (requestedItem?.scenario as? Scenario)?.let { scenario ->
+                val currentItem = requestedItem
+                val targetScenario = if (currentItem != null) {
+                    currentItem.scenario as? Scenario
+                } else {
+                    // Agent Mode: Create a dummy scenario
+                    Scenario(
+                        id = Identifier(id = -1L, asTemporary = true), 
+                        name = "Agent Mode",
+                        detectionQuality = 100
+                    )
+                }
+
+                targetScenario?.let { scenario ->
                     startSmartScenario(result, scenario)
                 }
             }
@@ -72,10 +85,27 @@ class ScenarioActivity : AppCompatActivity(), ScenarioListFragment.Listener {
         )
     }
 
+    override fun startAgentMode() {
+        requestedItem = null // Clear strict scenario item
+        
+        scenarioViewModel.startPermissionFlowIfNeeded(
+            activity = this,
+            onAllGranted = ::onMandatoryPermissionsGranted,
+        )
+    }
+
     private fun onMandatoryPermissionsGranted() {
         scenarioViewModel.startTroubleshootingFlowIfNeeded(this) {
-            when (val scenario = requestedItem?.scenario) {
-                is Scenario -> projectionActivityResult.showMediaProjectionWarning(
+            val scenario = requestedItem?.scenario
+            if (scenario is Scenario) {
+                projectionActivityResult.showMediaProjectionWarning(
+                    context = this,
+                    forceEntireScreen = scenarioViewModel.isEntireScreenCaptureForced(),
+                    onError = { showUnsupportedDeviceDialog() },
+                )
+            } else if (scenario == null && requestedItem == null) {
+                 // Agent Mode (No scenario selected)
+                 projectionActivityResult.showMediaProjectionWarning(
                     context = this,
                     forceEntireScreen = scenarioViewModel.isEntireScreenCaptureForced(),
                     onError = { showUnsupportedDeviceDialog() },

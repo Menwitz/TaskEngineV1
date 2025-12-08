@@ -48,6 +48,7 @@ class ScenarioListFragment : Fragment() {
 
     interface Listener {
         fun startScenario(item: ScenarioListUiState.Item.ScenarioItem)
+        fun startAgentMode()
     }
 
     /** ViewModel providing the scenarios data to the UI. */
@@ -104,6 +105,10 @@ class ScenarioListFragment : Fragment() {
                 marginsIfInset = Rect(fabHorizontalMarginInset, 0, fabHorizontalMarginInset, fabBottomMarginInset),
                 marginIfNot =  Rect(fabHorizontalMargin, 0, fabHorizontalMargin, fabBottomMargin),
             )
+            
+            fabAgent.setOnClickListener {
+                 (requireActivity() as? Listener)?.startAgentMode()
+            }
         }
 
         lifecycleScope.launch {
