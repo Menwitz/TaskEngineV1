@@ -135,7 +135,35 @@ class MainMenu(private val onStopClicked: () -> Unit) : OverlayMenu(theme = R.st
             R.id.btn_click_list -> onConfigureClicked()
             R.id.btn_stop -> onStopClicked()
             R.id.btn_explore -> onExploreClicked()
+            R.id.btn_brain -> onBrainClicked()
         }
+    }
+
+    private fun onBrainClicked() {
+        android.util.Log.i("MainMenu", "Brain button clicked")
+        
+        val input = android.widget.EditText(context).apply {
+             hint = "e.g. Open Settings and turn on Dark Mode"
+        }
+        
+        MaterialAlertDialogBuilder(context.getDynamicColorsContext(R.style.AppTheme))
+            .setTitle("Tapt Brain 🧠")
+            .setView(input)
+            .setPositiveButton("Go") { _, _ ->
+                val goal = input.text.toString()
+                if (goal.isNotBlank()) {
+                    // Send Broadcast to Service
+                    val json = org.json.JSONObject().put("goal", goal).toString()
+                    val intent = android.content.Intent("com.buzbuz.smartautoclicker.agent.EXECUTE_TASK").apply {
+                        setPackage(context.packageName)
+                        putExtra("json_task", json)
+                    }
+                    context.sendBroadcast(intent)
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .create()
+            .showAsOverlay()
     }
 
     private fun onExploreClicked() {
