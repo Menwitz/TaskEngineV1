@@ -44,6 +44,19 @@ import java.io.File
 import java.io.FileOutputStream
 
 
+import com.buzbuz.smartautoclicker.core.agent.perception.AccessibilityParser
+import com.buzbuz.smartautoclicker.core.agent.remote.RemoteCommandReceiver
+import android.content.IntentFilter
+import androidx.lifecycle.LifecycleCoroutineScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import com.buzbuz.smartautoclicker.core.agent.AgentLoop
+import com.buzbuz.smartautoclicker.core.agent.action.AgentActionExecutor
+import com.buzbuz.smartautoclicker.core.agent.brain.MockLLMClient
+import com.buzbuz.smartautoclicker.core.agent.brain.OpenAIClient
+import com.buzbuz.smartautoclicker.core.agent.exploration.ExplorationService
+
 /**
  * AccessibilityService implementation for the SmartAutoClicker.
  *
@@ -76,12 +89,22 @@ class SmartAutoClickerService : AccessibilityService(), SmartActionExecutor {
     @Inject lateinit var appComponentsProvider: AppComponentsProvider
 
     private var serviceActionExecutor: ServiceActionExecutor? = null
+    private val accessibilityParser = AccessibilityParser()
+    
+    // Agent Components
+    private var remoteCommandReceiver: RemoteCommandReceiver? = null
+    private var agentLoop: AgentLoop? = null
+    private val serviceScope = CoroutineScope(Dispatchers.Main)
 
     override fun onServiceConnected() {
         super.onServiceConnected()
 
         qualityMetricsMonitor.onServiceConnected()
         serviceActionExecutor = ServiceActionExecutor(this)
+
+        // Initialize Agent Components
+        setupAgent()
+
 
         localServiceProvider.setLocalService(
             LocalService(
@@ -104,9 +127,60 @@ class SmartAutoClickerService : AccessibilityService(), SmartActionExecutor {
         }
         localServiceProvider.setLocalService(null)
 
+        // Cleanup Agent
+        if (remoteCommandReceiver != null) {
+            unregisterReceiver(remoteCommandReceiver)
+            remoteCommandReceiver = null
+        }
+        agentLoop = null
+
         qualityMetricsMonitor.onServiceUnbind()
         serviceActionExecutor = null
         return super.onUnbind(intent)
+    }
+
+    private fun setupAgent() {
+        // Wire up the Remote Command Receiver
+        remoteCommandReceiver = RemoteCommandReceiver { goal ->
+             startAgentTask(goal) 
+        }
+        val filter = IntentFilter(RemoteCommandReceiver.ACTION_EXECUTE_TASK)
+        registerReceiver(remoteCommandReceiver, filter, RECEIVER_EXPORTED) // Needs export for ADB
+
+        // Prepare the Loop (Brain + Hands + Eyes)
+        val apiKey = BuildConfig.OPENAI_API_KEY
+        val brain = if (apiKey.isNotBlank()) {
+            OpenAIClient(apiKey)
+        } else {
+            Log.w(TAG, "No OPENAI_API_KEY found in BuildConfig. Using Mock Brain.")
+            MockLLMClient()
+        }
+
+        val actionExecutor = AgentActionExecutor(this) // 'this' implements SmartActionExecutor
+        // Note: accessibilityParser is already instantiated
+        
+        // Exploration Service (Optional for now)
+        val navigation = com.buzbuz.smartautoclicker.core.agent.memory.NavigationGraph()
+        val explorer = ExplorationService(accessibilityParser, actionExecutor, navigation)
+
+        agentLoop = AgentLoop(
+            parser = accessibilityParser,
+            brain = brain,
+            actionExecutor = actionExecutor,
+            context = this
+        )
+    }
+
+    private fun startAgentTask(goal: String) {
+        Log.i(TAG, "Starting Agent Task: $goal")
+        serviceScope.launch {
+            val dm = resources.displayMetrics
+            agentLoop?.runTask(
+                goal = goal,
+                rootProvider = { rootInActiveWindow },
+                screenMetrics = dm.widthPixels to dm.heightPixels
+            )
+        }
     }
 
     private fun onLocalServiceStarted(scenarioId: Long, isSmart: Boolean, serviceNotification: Notification?) {
@@ -339,6 +413,23 @@ class SmartAutoClickerService : AccessibilityService(), SmartActionExecutor {
         detectionRepository.dump(writer)
         serviceActionExecutor?.dump(writer)
         qualityRepository.dump(writer)
+
+        writer.append("* Agent Perception:").println()
+        val root = rootInActiveWindow
+        if (root != null) {
+            try {
+                val dm = resources.displayMetrics
+                val snapshot = accessibilityParser.parse(root, dm.widthPixels, dm.heightPixels)
+                writer.append(Dumpable.DUMP_DISPLAY_TAB).append("Snapshot Elements: ${snapshot.elements.size}").println()
+                snapshot.elements.values.take(20).forEach { el ->
+                   writer.append(Dumpable.DUMP_DISPLAY_TAB).append("  [${el.id}] ${el.viewIdResourceName ?: ""} '${el.text ?: ""}' ${el.contentDescription ?: ""} ${el.bounds}").println()
+                }
+            } catch (e: Exception) {
+                writer.append(Dumpable.DUMP_DISPLAY_TAB).append("Error parsing UI: ${e.message}").println()
+            }
+        } else {
+            writer.append(Dumpable.DUMP_DISPLAY_TAB).append("Root is null").println()
+        }
     }
 
     override fun onInterrupt() { /* Unused */ }

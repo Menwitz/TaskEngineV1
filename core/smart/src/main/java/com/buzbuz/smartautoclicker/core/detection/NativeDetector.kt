@@ -106,7 +106,7 @@ class NativeDetector private constructor() : ImageDetector {
             normalizedRegion.getPixels(pixelsScreen, 0, targetWidth, 0, 0, targetWidth, targetHeight)
             
             if (normalizedRegion !== screenRegion) normalizedRegion.recycle()
-            screenRegion.recycle()
+            if (screenRegion !== screen) screenRegion.recycle()
         } else {
             // No scaling needed, read directly from screen bitmap
             screen.getPixels(
