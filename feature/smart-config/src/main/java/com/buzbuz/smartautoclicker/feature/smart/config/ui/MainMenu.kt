@@ -139,7 +139,10 @@ class MainMenu(private val onStopClicked: () -> Unit) : OverlayMenu(theme = R.st
     }
 
     private fun onExploreClicked() {
-        val intent = android.content.Intent("com.buzbuz.smartautoclicker.agent.TOGGLE_EXPLORATION")
+        android.util.Log.i("MainMenu", "Explore button clicked in MainMenu")
+        val intent = android.content.Intent("com.buzbuz.smartautoclicker.agent.TOGGLE_EXPLORATION").apply {
+            setPackage(context.packageName)
+        }
         context.sendBroadcast(intent)
     }
 

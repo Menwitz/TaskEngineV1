@@ -52,6 +52,7 @@
                     android:layout_width="@dimen/image_button_size"
                     android:layout_height="@dimen/image_button_size"
                     android:src="@drawable/ic_play_arrow"
+                    android:scaleType="fitCenter"
                     android:contentDescription="@string/content_desc_play_pause_scenario" />
 
                 <ImageButton
@@ -60,6 +61,7 @@
                     android:layout_width="@dimen/image_button_size"
                     android:layout_height="@dimen/image_button_size"
                     android:src="@drawable/ic_stop"
+                    android:scaleType="fitCenter"
                     android:contentDescription="@string/content_desc_stop_clicker" />
 
                 <ImageButton
@@ -77,6 +79,7 @@
                     android:layout_width="@dimen/image_button_size"
                     android:layout_height="@dimen/image_button_size"
                     android:src="@drawable/ic_settings_filled"
+                    android:scaleType="fitCenter"
                     android:contentDescription="@string/content_desc_open_event_list" />
 
                 <ImageButton
@@ -85,6 +88,7 @@
                     android:layout_width="@dimen/image_button_size"
                     android:layout_height="@dimen/image_button_size"
                     android:src="@drawable/ic_move"
+                    android:scaleType="fitCenter"
                     android:contentDescription="@string/content_desc_move_menu" />
 
             </LinearLayout>
