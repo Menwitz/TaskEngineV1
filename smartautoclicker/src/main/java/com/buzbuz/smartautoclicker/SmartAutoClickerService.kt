@@ -449,7 +449,17 @@ class SmartAutoClickerService : AccessibilityService(), SmartActionExecutor {
             explorationJob = null
         } else {
             Log.i(TAG, "Starting Exploration...")
-            android.widget.Toast.makeText(this, "Agent: Exploration Started", android.widget.Toast.LENGTH_SHORT).show()
+            
+            // Show Notification
+            executeNotification(NotificationRequest(
+                actionId = 9999L,
+                eventId = -1L,
+                title = "Authentication Agent",
+                message = "Exploration Started",
+                groupName = "Agent",
+                importance = NotificationManager.IMPORTANCE_DEFAULT
+            ))
+
             explorationJob = serviceScope.launch {
                 val dm = resources.displayMetrics
                 val width = dm.widthPixels
