@@ -49,24 +49,32 @@
                 <ImageButton
                     android:id="@+id/btn_play"
                     style="@style/AppTheme.Overlay.FloatingMenu.Buttons"
+                    android:layout_width="@dimen/image_button_size"
+                    android:layout_height="@dimen/image_button_size"
                     android:src="@drawable/ic_play_arrow"
                     android:contentDescription="@string/content_desc_play_pause_scenario" />
 
                 <ImageButton
                     android:id="@+id/btn_stop"
                     style="@style/AppTheme.Overlay.FloatingMenu.Buttons"
+                    android:layout_width="@dimen/image_button_size"
+                    android:layout_height="@dimen/image_button_size"
                     android:src="@drawable/ic_stop"
                     android:contentDescription="@string/content_desc_stop_clicker" />
 
                 <ImageButton
                     android:id="@+id/btn_click_list"
                     style="@style/AppTheme.Overlay.FloatingMenu.Buttons"
+                    android:layout_width="@dimen/image_button_size"
+                    android:layout_height="@dimen/image_button_size"
                     android:src="@drawable/ic_settings_filled"
                     android:contentDescription="@string/content_desc_open_event_list" />
 
                 <ImageButton
                     android:id="@+id/btn_move"
                     style="@style/AppTheme.Overlay.FloatingMenu.Buttons"
+                    android:layout_width="@dimen/image_button_size"
+                    android:layout_height="@dimen/image_button_size"
                     android:src="@drawable/ic_move"
                     android:contentDescription="@string/content_desc_move_menu" />
 
