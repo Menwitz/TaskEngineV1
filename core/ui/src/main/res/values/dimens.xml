@@ -43,7 +43,7 @@
     <dimen name="dialog_choice_item_icon_size">32dp</dimen>
     <dimen name="dropdown_item_icon_size">32dp</dimen>
     <dimen name="drawable_padding_small">8dp</dimen>
-    <dimen name="image_button_size">32dp</dimen>
+    <dimen name="image_button_size">36dp</dimen>
     <dimen name="item_brief_height">80dp</dimen>
 
     <!-- Elevation helpers -->
