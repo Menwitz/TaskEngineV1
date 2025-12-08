@@ -195,6 +195,8 @@ internal class ScenarioDataSource @Inject constructor(
     }
 
     suspend fun markAsUsed(scenarioDbId: Long) {
+        if (scenarioDbId == DATABASE_ID_INSERTION || scenarioDbId == -1L) return
+
         currentDatabase.value.scenarioDao().let { scenarioDao ->
             val previousStats = scenarioDao.getScenarioStats(scenarioDbId)
             if (previousStats != null) {
