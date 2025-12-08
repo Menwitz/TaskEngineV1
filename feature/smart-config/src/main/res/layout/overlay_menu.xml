@@ -74,6 +74,15 @@
                     android:contentDescription="@string/content_desc_explore" />
 
                 <ImageButton
+                    android:id="@+id/btn_brain"
+                    style="@style/AppTheme.Overlay.FloatingMenu.Buttons"
+                    android:layout_width="@dimen/image_button_size"
+                    android:layout_height="@dimen/image_button_size"
+                    android:src="@drawable/ic_help"
+                    android:scaleType="fitCenter"
+                    android:contentDescription="Ask Agent" />
+
+                <ImageButton
                     android:id="@+id/btn_click_list"
                     style="@style/AppTheme.Overlay.FloatingMenu.Buttons"
                     android:layout_width="@dimen/image_button_size"
