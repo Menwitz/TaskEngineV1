@@ -27,12 +27,16 @@
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         style="@style/AppTheme.Widget.AppBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         app:liftOnScrollTargetViewId="@id/list"
         app:liftOnScroll="true">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/topAppBar"
             style="@style/AppTheme.Widget.Toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             app:layout_scrollFlags="scroll|enterAlways|snap"
             app:layout_scrollEffect="compress"
             app:title="@string/activity_scenario_title"

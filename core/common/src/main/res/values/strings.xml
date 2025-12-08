@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+    <string name="dialog_troubleshooting_title">Troubleshooting</string>
+    <string name="dialog_troubleshooting_message">It looks like Android removed the Accessibility permission required by AutoClicker. Please follow the instructions on dontkillmyapp.com to whitelist the app, then come back and grant the permission again.</string>
+    <string name="dialog_troubleshooting_open_website">Open dontkillmyapp.com</string>
+    <string name="dialog_troubleshooting_understood">I understand</string>
+    <string name="default_scenario_name">Default name</string>
+    <string name="dialog_title_add_scenario">New scenario</string>
+
+</resources>
+

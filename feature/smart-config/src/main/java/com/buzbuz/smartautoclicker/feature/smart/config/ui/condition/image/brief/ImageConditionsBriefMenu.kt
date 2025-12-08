@@ -24,7 +24,6 @@ import com.buzbuz.smartautoclicker.feature.smart.config.ui.condition.OnCondition
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.condition.copy.ConditionCopyDialog
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.condition.image.CaptureMenu
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.condition.image.ImageConditionDialog
-import com.buzbuz.smartautoclicker.feature.smart.debugging.ui.overlay.TryImageConditionOverlayMenu
 
 import kotlinx.coroutines.launch
 
@@ -126,23 +125,7 @@ class ImageConditionsBriefMenu(
         briefViewBinding.viewBrief.setDescription(visualization, true)
     }
 
-    private fun showTryConditionOverlay() {
-        val focusedItem = getFocusedItemBrief() ?: return
-
-        viewModel.getEditedScenario()?.let { scenario ->
-            overlayManager.navigateTo(
-                context = context,
-                newOverlay = TryImageConditionOverlayMenu(
-                    scenario = scenario,
-                    imageCondition = (focusedItem.data as UiImageCondition).condition,
-                    onNewThresholdSelected = { threshold ->
-                        viewModel.updateConditionThreshold(threshold)
-                    }
-                ),
-                hideCurrent = true,
-            )
-        }
-    }
+    private fun showTryConditionOverlay() = Unit
 
     private fun showImageConditionCopyDialog() {
         overlayManager.navigateTo(

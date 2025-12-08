@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+* Copyright (C) 2024 Kevin Buzeau
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<resources>
+
+    <!-- Generic horizontal margins -->
+    <dimen name="margin_horizontal_mini">8dp</dimen>
+    <dimen name="margin_horizontal_small">12dp</dimen>
+    <dimen name="margin_horizontal_default">16dp</dimen>
+    <dimen name="margin_horizontal_intermediate">20dp</dimen>
+    <dimen name="margin_horizontal_large">24dp</dimen>
+    <dimen name="margin_horizontal_extra_large">32dp</dimen>
+
+    <!-- Generic vertical margins -->
+    <dimen name="margin_vertical_mini">4dp</dimen>
+    <dimen name="margin_vertical_small">8dp</dimen>
+    <dimen name="margin_vertical_default">12dp</dimen>
+    <dimen name="margin_vertical_large">16dp</dimen>
+    <dimen name="margin_vertical_extra_large">24dp</dimen>
+
+    <!-- Common component sizes -->
+    <dimen name="item_height">56dp</dimen>
+    <dimen name="item_height_big">72dp</dimen>
+    <dimen name="field_min_height">48dp</dimen>
+    <dimen name="empty_list_height">180dp</dimen>
+    <dimen name="bottom_sheet_min_height">400dp</dimen>
+    <dimen name="android_bottom_navigation_height">56dp</dimen>
+    <dimen name="card_view_height_horizontal_list">120dp</dimen>
+    <dimen name="dialog_choice_item_icon_size">32dp</dimen>
+    <dimen name="dropdown_item_icon_size">32dp</dimen>
+    <dimen name="drawable_padding_small">8dp</dimen>
+    <dimen name="image_button_size">40dp</dimen>
+    <dimen name="item_brief_height">80dp</dimen>
+
+    <!-- Elevation helpers -->
+    <dimen name="elevation_level_2">4dp</dimen>
+    <dimen name="elevation_level_3">8dp</dimen>
+
+    <!-- Text sizes -->
+    <dimen name="text_size_item_title">16sp</dimen>
+    <dimen name="text_size_large">18sp</dimen>
+    <dimen name="text_size_list_item_text_big">16sp</dimen>
+    <dimen name="text_size_list_item_text_small">14sp</dimen>
+
+    <!-- Overlay specific dimensions -->
+    <dimen name="overlay_brief_background_top_padding">32dp</dimen>
+    <dimen name="overlay_brief_instructions_bottom_padding">24dp</dimen>
+    <dimen name="overlay_selector_radius">52dp</dimen>
+    <dimen name="overlay_selector_inner_radius">8dp</dimen>
+    <dimen name="overlay_selector_thickness">2dp</dimen>
+    <dimen name="overlay_gesture_length">48dp</dimen>
+    <dimen name="overlay_gesture_thickness">3dp</dimen>
+    <dimen name="overlay_click_offset_radius">48dp</dimen>
+    <dimen name="overlay_click_offset_inner_radius">10dp</dimen>
+    <dimen name="overlay_click_offset_thickness">2dp</dimen>
+
+</resources>

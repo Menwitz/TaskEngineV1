@@ -41,7 +41,6 @@ import com.buzbuz.smartautoclicker.feature.smart.config.ui.event.copy.EventCopyM
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.scenario.ScenarioDialogViewModel
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.scenario.config.ScenarioConfigViewModel
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.scenario.imageevents.ImageEventListViewModel
-import com.buzbuz.smartautoclicker.feature.smart.config.ui.scenario.more.MoreViewModel
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.scenario.triggerevents.TriggerEventListViewModel
 
 import dagger.hilt.EntryPoint
@@ -75,7 +74,6 @@ interface ScenarioConfigViewModelsEntryPoint {
     fun intentActionsSelectionViewModel(): IntentActionsSelectionViewModel
     fun intentViewModel(): IntentViewModel
     fun mainMenuViewModel(): MainMenuModel
-    fun moreViewModel(): MoreViewModel
     fun notificationViewModel(): NotificationViewModel
     fun pauseViewModel(): PauseViewModel
     fun scenarioConfigViewModel(): ScenarioConfigViewModel

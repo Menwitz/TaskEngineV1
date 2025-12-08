@@ -7,15 +7,6 @@ plugins {
 android {
     namespace = "com.buzbuz.smartautoclicker.feature.smart.config"
     buildFeatures.viewBinding = true
-    compileSdk = 35
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-    kotlinOptions {
-        jvmTarget = "17"
-    }
 }
 
 dependencies {
@@ -30,15 +21,14 @@ dependencies {
 
     implementation(libs.google.material)
 
-    implementation(project(":core:common:android"))
-    implementation(project(":core:common:base"))
-    implementation(project(":core:common:bitmaps"))
-    implementation(project(":core:common:display"))
-    implementation(project(":core:common:overlays"))
-    implementation(project(":core:common:permissions"))
-    implementation(project(":core:common:settings"))
-    implementation(project(":core:common:ui"))
-    implementation(project(":core:smart:domain"))
-    implementation(project(":core:smart:processing"))
-    implementation(project(":feature:smart-debugging"))
+    implementation(project(":core:common"))
+    implementation(project(":core:ui"))
+    implementation(project(":core:smart"))
+
+    testImplementation(libs.junit)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.androidx.arch.core.testing)
+    testImplementation(libs.robolectric)
 }

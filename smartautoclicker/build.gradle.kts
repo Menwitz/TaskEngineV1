@@ -7,7 +7,6 @@ plugins {
 
 android {
     namespace = "com.buzbuz.smartautoclicker"
-    compileSdk = 36
 
     buildFeatures {
         viewBinding = true
@@ -18,17 +17,7 @@ android {
         applicationId = "com.buzbuz.smartautoclicker"
         versionCode = 78
         versionName = "3.3.10"
-        minSdk = 24
-        targetSdk = 34
         vectorDrawables { useSupportLibrary = true }
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-    kotlinOptions {
-        jvmTarget = "17"
     }
 
     buildTypes {
@@ -68,20 +57,8 @@ dependencies {
     implementation(libs.airbnb.lottie)
     implementation(libs.google.material)
 
-    implementation(project(":core:common:base"))
-    implementation(project(":core:common:bitmaps"))
-    implementation(project(":core:common:display"))
-    implementation(project(":core:common:overlays"))
-    implementation(project(":core:common:permissions"))
-    implementation(project(":core:common:quality"))
-    implementation(project(":core:common:settings"))
-    implementation(project(":core:common:ui"))
-    implementation(project(":core:smart:detection"))
-    implementation(project(":core:smart:domain"))
-    implementation(project(":core:smart:processing"))
-    implementation(project(":feature:backup"))
-    implementation(project(":feature:notifications"))
-    implementation(project(":feature:quick-settings-tile"))
+    implementation(project(":core:common"))
+    implementation(project(":core:ui"))
+    implementation(project(":core:smart"))
     implementation(project(":feature:smart-config"))
-    implementation(project(":feature:smart-debugging"))
 }

@@ -24,6 +24,10 @@
     <string name="generic_config">Config</string>
     <string name="generic_counters">Counters</string>
     <string name="generic_modify">Modify</string>
+    <string name="dialog_overlay_title_warning">Warning</string>
+    <string name="dialog_overlay_title_copy_from">Copy from…</string>
+    <string name="message_empty_copy">Nothing to copy yet.</string>
+    <string name="item_error_action_invalid_generic">This action is misconfigured.</string>
 
 
     <!-- Scenario Items ============================================================================================ -->
@@ -116,11 +120,14 @@
 
     <string name="menu_item_title_image_events">Screen</string>
     <string name="menu_item_title_trigger_events">Triggers</string>
-    <string name="menu_item_title_more">More</string>
 
     <string name="field_scenario_quality_title">Detection resolution</string>
     <string name="field_scenario_quality_description">To achieve faster detection, Klick\'r is downscaling the images before detecting.\n\nIf you increase the resolution, the detection will be slower, but more accurate. If you decrease the resolution, the detection will be faster, but less accurate. Find the good ratio between the detection resolution and the conditions thresholds to get the best of your scenarios!</string>
     <string name="field_scenario_quality_resolution" translatable="false">%1$d x %2$d</string>
+    <string name="input_field_label_scenario_name">Scenario name</string>
+    <string name="input_field_label_anti_detection">Anti-detection</string>
+    <string name="dropdown_helper_text_anti_detection_disabled">Experimental protection disabled</string>
+    <string name="dropdown_helper_text_anti_detection_enabled">Reduce pattern recognition from other apps</string>
 
 
     <string name="field_show_debug_view_title">Show debug view</string>
@@ -148,6 +155,15 @@
 
     <string name="menu_item_title_conditions">Conditions</string>
     <string name="menu_item_title_actions">Actions</string>
+    <string name="field_click_position_title">Click position</string>
+    <string name="input_field_label_click_press_duration">Press duration</string>
+    <string name="input_field_label_pause_duration">Pause duration</string>
+    <string name="input_field_label_swipe_duration">Swipe duration</string>
+    <string name="dropdown_label_time_unit">Time unit</string>
+    <string name="dropdown_label_time_unit_ms">Milliseconds</string>
+    <string name="dropdown_label_time_unit_s">Seconds</string>
+    <string name="dropdown_label_time_unit_min">Minutes</string>
+    <string name="dropdown_label_time_unit_h">Hours</string>
 
     <string name="field_event_state_title">State</string>
     <string name="field_event_state_desc_enabled">This event will be interpreted normally when playing the scenario</string>

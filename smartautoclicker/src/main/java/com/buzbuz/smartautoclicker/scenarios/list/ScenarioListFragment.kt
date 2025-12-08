@@ -26,7 +26,7 @@ import com.buzbuz.smartautoclicker.core.base.extensions.applySafeContentInsets
 import com.buzbuz.smartautoclicker.databinding.FragmentScenariosBinding
 import com.buzbuz.smartautoclicker.feature.backup.ui.BackupDialogFragment
 import com.buzbuz.smartautoclicker.feature.backup.ui.BackupDialogFragment.Companion.FRAGMENT_TAG_BACKUP_DIALOG
-import com.buzbuz.smartautoclicker.scenarios.creation.ScenarioCreationDialog
+import com.buzbuz.smartautoclicker.feature.smart.config.ui.creation.ScenarioCreationDialog
 import com.buzbuz.smartautoclicker.scenarios.list.adapter.ScenarioAdapter
 import com.buzbuz.smartautoclicker.scenarios.list.copy.ScenarioCopyDialog
 import com.buzbuz.smartautoclicker.scenarios.list.copy.ScenarioCopyDialog.Companion.FRAGMENT_TAG_COPY_DIALOG

@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+    <!-- Base placeholders to satisfy implicit style parent chains -->
+    <style name="AppTheme.Dialog" parent="@style/AppTheme"/>
+    <style name="AppTheme.Overlay" parent="@style/AppTheme"/>
+    <style name="AppTheme.Overlay.FloatingMenu" parent="@style/AppTheme.Overlay"/>
+    <style name="AppTheme.Widget" parent="@style/AppTheme"/>
+
+    <!-- Activity/theme variants -->
+    <style name="AppTheme.TranslucentActivity" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+
+    <!-- Dialog scaffolding -->
+    <style name="AppTheme.Dialog.BackgroundLayout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:paddingStart">@dimen/margin_horizontal_default</item>
+        <item name="android:paddingEnd">@dimen/margin_horizontal_default</item>
+        <item name="android:paddingTop">@dimen/margin_vertical_large</item>
+        <item name="android:paddingBottom">@dimen/margin_vertical_large</item>
+        <item name="android:background">?attr/colorSurface</item>
+        <item name="android:clipToPadding">false</item>
+    </style>
+
+    <style name="AppTheme.Dialog.TopBar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingStart">@dimen/margin_horizontal_default</item>
+        <item name="android:paddingEnd">@dimen/margin_horizontal_default</item>
+        <item name="android:paddingTop">@dimen/margin_vertical_default</item>
+        <item name="android:paddingBottom">@dimen/margin_vertical_default</item>
+        <item name="android:background">?attr/colorSurfaceVariant</item>
+    </style>
+
+    <style name="AppTheme.Dialog.TopBarTitle" parent="AppTheme.TextAppearance.TopBarTitle">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Text appearances -->
+    <style name="AppTheme.TextAppearance.TopBarTitle" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="AppTheme.TextAppearance.CardTitle" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="AppTheme.TextAppearance.CardItemHText" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+    </style>
+
+    <style name="AppTheme.TextAppearance.BodyLarge" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="AppTheme.TextAppearance.Body" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="AppTheme.TextAppearance.EmptyText" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+    </style>
+
+    <style name="AppTheme.TextAppearance.EmptyTextSecondary" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+    </style>
+
+    <style name="AppTheme.TextAppearance.ListItemTitle" parent="TextAppearance.Material3.TitleSmall">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="AppTheme.TextAppearance.ListItemSubText" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+    </style>
+
+    <!-- Field/list wrappers -->
+    <style name="AppTheme.Field.TitleText" parent="AppTheme.TextAppearance.ListItemTitle"/>
+    <style name="AppTheme.Field.SubText" parent="AppTheme.TextAppearance.ListItemSubText"/>
+
+    <style name="AppTheme.List.ItemTitle" parent="AppTheme.TextAppearance.ListItemTitle"/>
+    <style name="AppTheme.List.ItemSubText" parent="AppTheme.TextAppearance.ListItemSubText"/>
+    <style name="AppTheme.List.HeaderText" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+    </style>
+
+    <!-- Generic text styles -->
+    <style name="AppTheme.TextAppearance.BodyLarge.Bold" parent="AppTheme.TextAppearance.BodyLarge">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="AppTheme.TextAppearance.ListItemTitle.Bold" parent="AppTheme.TextAppearance.ListItemTitle">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Widget styles -->
+    <style name="AppTheme.Widget.AppBarLayout" parent="Widget.Material3.AppBarLayout">
+        <item name="android:background">?attr/colorSurface</item>
+        <item name="android:elevation">@dimen/elevation_level_2</item>
+    </style>
+
+    <style name="AppTheme.Widget.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="android:background">?attr/colorSurface</item>
+        <item name="android:theme">@style/ThemeOverlay.Material3.ActionBar</item>
+        <item name="android:popupTheme">@style/ThemeOverlay.Material3.ActionBar</item>
+    </style>
+
+    <style name="AppTheme.Widget.Card" parent="Widget.Material3.CardView.Elevated">
+        <item name="android:layout_marginHorizontal">@dimen/margin_horizontal_default</item>
+        <item name="android:layout_marginVertical">@dimen/margin_vertical_small</item>
+        <item name="cardUseCompatPadding">true</item>
+        <item name="cardElevation">@dimen/elevation_level_2</item>
+    </style>
+
+    <style name="AppTheme.Widget.CardFilled" parent="Widget.Material3.CardView.Filled">
+        <item name="android:layout_marginHorizontal">@dimen/margin_horizontal_default</item>
+        <item name="android:layout_marginVertical">@dimen/margin_vertical_small</item>
+    </style>
+
+    <style name="AppTheme.Widget.CardOutlined" parent="Widget.Material3.CardView.Outlined">
+        <item name="android:layout_marginHorizontal">@dimen/margin_horizontal_default</item>
+        <item name="android:layout_marginVertical">@dimen/margin_vertical_small</item>
+        <item name="strokeWidth">1dp</item>
+    </style>
+
+    <!-- Floating overlays -->
+    <style name="AppTheme.Overlay.FloatingMenu.CardView" parent="AppTheme.Widget.CardFilled">
+        <item name="cardCornerRadius">20dp</item>
+        <item name="android:padding">@dimen/margin_horizontal_small</item>
+        <item name="cardElevation">@dimen/elevation_level_3</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <style name="AppTheme.Overlay.FloatingMenu.LayoutButtons">
+        <item name="android:orientation">horizontal</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="AppTheme.Overlay.FloatingMenu.Buttons" parent="Widget.Material3.Button.IconButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginHorizontal">@dimen/margin_horizontal_mini</item>
+        <item name="android:layout_marginVertical">@dimen/margin_vertical_mini</item>
+        <item name="android:backgroundTint">?attr/colorSurfaceVariant</item>
+    </style>
+
+    <!-- Buttons -->
+    <style name="AppTheme.Widget.TextButton" parent="Widget.Material3.Button.TextButton">
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="AppTheme.Widget.TextButtonOutlined" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="AppTheme.Widget.CheckableButton" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:minWidth">0dp</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="AppTheme.Widget.SegmentedTextButtons" parent="Widget.Material3.Button.TextButton">
+        <item name="android:minWidth">0dp</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="AppTheme.Widget.SegmentedIconButtons" parent="Widget.Material3.Button.IconButton">
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:padding">@dimen/margin_horizontal_small</item>
+    </style>
+
+    <style name="AppTheme.Widget.IconButton" parent="Widget.Material3.Button.IconButton">
+        <item name="android:padding">@dimen/margin_horizontal_small</item>
+    </style>
+
+    <style name="AppTheme.Widget.IconButtonFilled" parent="Widget.Material3.Button.IconButton.Filled">
+        <item name="android:padding">@dimen/margin_horizontal_small</item>
+    </style>
+
+    <style name="AppTheme.Widget.IconButtonFilledTonal" parent="Widget.Material3.Button.IconButton.Filled.Tonal">
+        <item name="android:padding">@dimen/margin_horizontal_small</item>
+    </style>
+
+    <style name="AppTheme.Widget.RadioButton" parent="Widget.Material3.CompoundButton.RadioButton">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="AppTheme.Widget.Fab" parent="Widget.Material3.FloatingActionButton.Primary">
+        <item name="android:layout_margin">@dimen/margin_horizontal_default</item>
+    </style>
+
+    <style name="AppTheme.Widget.FabSecondary" parent="Widget.Material3.FloatingActionButton.Secondary">
+        <item name="android:layout_margin">@dimen/margin_horizontal_default</item>
+    </style>
+
+    <!-- Progress indicators -->
+    <style name="AppTheme.Widget.CircularProgressIndicator" parent="Widget.Material3.CircularProgressIndicator">
+        <item name="indicatorSize">48dp</item>
+    </style>
+
+    <style name="AppTheme.Widget.CircularProgressIndicator.Button" parent="Widget.Material3.CircularProgressIndicator">
+        <item name="indicatorSize">24dp</item>
+        <item name="indicatorColor">?attr/colorOnPrimary</item>
+    </style>
+
+    <style name="AppTheme.Widget.CircularProgressIndicator.Button.Colored" parent="AppTheme.Widget.CircularProgressIndicator.Button">
+        <item name="indicatorColor">?attr/colorPrimary</item>
+    </style>
+
+    <!-- Inputs -->
+    <style name="AppTheme.Widget.InputText" parent="Widget.Material3.TextInputLayout.OutlinedBox.Dense">
+        <item name="boxBackgroundMode">outline</item>
+        <item name="boxStrokeColor">?attr/colorPrimary</item>
+    </style>
+
+    <style name="AppTheme.Widget.InputDropdown" parent="Widget.Material3.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu">
+        <item name="boxBackgroundMode">outline</item>
+        <item name="boxStrokeColor">?attr/colorPrimary</item>
+    </style>
+
+    <!-- Dividers -->
+    <style name="AppTheme.Widget.Divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">?attr/colorOutlineVariant</item>
+    </style>
+
+    <style name="AppTheme.Widget.Divider.Horizontal" parent="AppTheme.Widget.Divider"/>
+
+    <style name="AppTheme.Widget.Divider.Vertical">
+        <item name="android:layout_width">1dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">?attr/colorOutlineVariant</item>
+    </style>
+
+    <style name="AppTheme.Widget.DividerSecondaryH" parent="AppTheme.Widget.Divider">
+        <item name="android:background">?attr/colorSurfaceVariant</item>
+    </style>
+
+</resources>
+

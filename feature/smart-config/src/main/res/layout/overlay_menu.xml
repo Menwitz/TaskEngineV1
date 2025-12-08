@@ -8,9 +8,11 @@
     android:layout_height="wrap_content"
     android:animateLayoutChanges="false">
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/menu_background"
         style="@style/AppTheme.Overlay.FloatingMenu.CardView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:animateLayoutChanges="true"
         tools:viewBindingIgnore="true">
 
@@ -36,6 +38,8 @@
             <LinearLayout
                 android:id="@+id/menu_items"
                 style="@style/AppTheme.Overlay.FloatingMenu.LayoutButtons"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -134,5 +138,5 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 </FrameLayout>

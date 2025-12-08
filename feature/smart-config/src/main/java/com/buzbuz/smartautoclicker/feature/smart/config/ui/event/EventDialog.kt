@@ -42,7 +42,6 @@ import com.buzbuz.smartautoclicker.feature.smart.config.ui.common.dialogs.showDe
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.common.model.condition.UiImageCondition
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.condition.image.brief.ImageConditionsBriefMenu
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.condition.trigger.TriggerConditionListDialog
-import com.buzbuz.smartautoclicker.feature.smart.debugging.ui.overlay.TryEventOverlayMenu
 
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
@@ -127,15 +126,6 @@ class EventDialog(
             setOnClickListener(viewModel::toggleKeepDetectingState)
         }
 
-        fieldTestEvent.apply {
-            setTitle(
-                context.getString(
-                    R.string.item_title_try_element,
-                    context.getString(R.string.dialog_title_image_event),
-                )
-            )
-            setOnClickListener { debounceUserInteraction { showTryElementMenu() } }
-        }
     }
 
     private fun DialogEventConfigBinding.setupConditionsCard() {
@@ -229,7 +219,6 @@ class EventDialog(
                 launch { viewModel.eventEnabledOnStart.collect(::updateEnabledOnStart) }
                 launch { viewModel.keepDetecting.collect(::updateKeepDetecting) }
                 launch { viewModel.isImageEvent.collect(::updateImageEventSpecificViewsVisibility) }
-                launch { viewModel.canTryEvent.collect(::updateTryFieldEnabledState) }
                 launch { viewModel.actionsDescriptions.collect(viewBinding.fieldActionsSelector::setItems) }
 
                 if (viewModel.isConfiguringScreenEvent()) {
@@ -310,13 +299,7 @@ class EventDialog(
         viewBinding.apply {
             fieldKeepDetecting.root.visibility =  if (isEnabled) View.VISIBLE else View.GONE
             dividerKeepDetecting.visibility =  if (isEnabled) View.VISIBLE else View.GONE
-            fieldTestEvent.root.visibility = if (isEnabled) View.VISIBLE else View.GONE
-            dividerTrySelector.visibility = if (isEnabled) View.VISIBLE else View.GONE
         }
-    }
-
-    private fun updateTryFieldEnabledState(isEnabled: Boolean) {
-        viewBinding.fieldTestEvent.setEnabled(isEnabled)
     }
 
     private fun onDeleteButtonClicked() {
@@ -363,15 +346,6 @@ class EventDialog(
         }
     }
 
-    private fun showTryElementMenu() {
-        viewModel.getTryInfo()?.let { (scenario, imageEvent) ->
-            overlayManager.navigateTo(
-                context = context,
-                newOverlay = TryEventOverlayMenu(scenario, imageEvent),
-                hideCurrent = true,
-            )
-        }
-    }
 }
 
 private const val TAG = "EventDialog"

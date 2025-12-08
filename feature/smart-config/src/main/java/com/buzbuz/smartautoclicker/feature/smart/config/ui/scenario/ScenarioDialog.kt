@@ -20,7 +20,6 @@ import com.buzbuz.smartautoclicker.feature.smart.config.di.ScenarioConfigViewMod
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.common.dialogs.showCloseWithoutSavingDialog
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.scenario.config.ScenarioConfigContent
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.scenario.imageevents.ImageEventListContent
-import com.buzbuz.smartautoclicker.feature.smart.config.ui.scenario.more.MoreContent
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.scenario.triggerevents.TriggerEventListContent
 
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -54,7 +53,6 @@ class ScenarioDialog(
         R.id.page_image_events -> ImageEventListContent(context.applicationContext)
         R.id.page_trigger_events -> TriggerEventListContent(context.applicationContext)
         R.id.page_config -> ScenarioConfigContent(context.applicationContext)
-        R.id.page_more -> MoreContent(context.applicationContext)
         else -> throw IllegalArgumentException("Unknown menu id $navItemId")
     }
 

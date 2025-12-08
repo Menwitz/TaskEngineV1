@@ -51,6 +51,8 @@
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/button_copy"
             style="@style/AppTheme.Widget.FabSecondary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:srcCompat="@drawable/ic_copy"
             android:contentDescription="@string/content_desc_copy_button"
             android:visibility="gone"
@@ -59,6 +61,8 @@
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/button_new"
             style="@style/AppTheme.Widget.Fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:srcCompat="@drawable/ic_add"
             android:contentDescription="@string/content_desc_add_button"/>
 

@@ -2,6 +2,8 @@ package com.buzbuz.smartautoclicker
 
 import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.GestureDescription
+import android.app.NotificationManager
+import android.app.NotificationChannel
 import android.app.Notification
 import android.content.Intent
 import android.graphics.Rect
@@ -9,6 +11,7 @@ import android.os.Build
 import android.util.Log
 import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
+import androidx.core.app.NotificationCompat
 
 import com.buzbuz.smartautoclicker.actions.ServiceActionExecutor
 import com.buzbuz.smartautoclicker.core.base.Dumpable
@@ -24,12 +27,6 @@ import com.buzbuz.smartautoclicker.core.domain.model.SmartActionExecutor
 import com.buzbuz.smartautoclicker.core.domain.model.scenario.Scenario
 import com.buzbuz.smartautoclicker.core.processing.domain.DetectionRepository
 import com.buzbuz.smartautoclicker.core.domain.model.NotificationRequest
-import com.buzbuz.smartautoclicker.core.settings.SettingsRepository
-import com.buzbuz.smartautoclicker.feature.notifications.common.NotificationIds
-import com.buzbuz.smartautoclicker.feature.notifications.user.UserNotificationsController
-import com.buzbuz.smartautoclicker.feature.qstile.domain.QSTileActionHandler
-import com.buzbuz.smartautoclicker.feature.qstile.domain.QSTileRepository
-import com.buzbuz.smartautoclicker.feature.smart.debugging.domain.DebuggingRepository
 import com.buzbuz.smartautoclicker.localservice.LocalService
 import com.buzbuz.smartautoclicker.localservice.LocalServiceProvider
 import android.view.Display
@@ -76,10 +73,6 @@ class SmartAutoClickerService : AccessibilityService(), SmartActionExecutor {
     @Inject lateinit var bitmapManager: BitmapRepository
     @Inject lateinit var qualityRepository: QualityRepository
     @Inject lateinit var qualityMetricsMonitor: QualityMetricsMonitor
-    @Inject lateinit var settingsRepository: SettingsRepository
-    @Inject lateinit var tileRepository: QSTileRepository
-    @Inject lateinit var debugRepository: DebuggingRepository
-    @Inject lateinit var userNotificationsController: UserNotificationsController
     @Inject lateinit var appComponentsProvider: AppComponentsProvider
 
     private var serviceActionExecutor: ServiceActionExecutor? = null
@@ -90,29 +83,16 @@ class SmartAutoClickerService : AccessibilityService(), SmartActionExecutor {
         qualityMetricsMonitor.onServiceConnected()
         serviceActionExecutor = ServiceActionExecutor(this)
 
-        tileRepository.setTileActionHandler(
-            object : QSTileActionHandler {
-                override fun isRunning(): Boolean = localServiceProvider.isServiceStarted()
-                override fun startSmartScenario(resultCode: Int, data: Intent, scenario: Scenario) {
-                    localServiceProvider.localServiceInstance?.startSmartScenario(resultCode, data, scenario)
-                }
-                override fun stop() {
-                    localServiceProvider.localServiceInstance?.stop()
-                }
-            }
-        )
-
         localServiceProvider.setLocalService(
             LocalService(
                 context = this,
                 overlayManager = overlayManager,
                 appComponentsProvider = appComponentsProvider,
                 detectionRepository = detectionRepository,
-                debugRepository = debugRepository,
-                settingsRepository = settingsRepository,
                 androidExecutor = this,
                 onStart = ::onLocalServiceStarted,
                 onStop = ::onLocalServiceStopped,
+                notificationId = FOREGROUND_NOTIFICATION_ID,
             )
         )
     }
@@ -134,12 +114,11 @@ class SmartAutoClickerService : AccessibilityService(), SmartActionExecutor {
         serviceActionExecutor?.reset()
 
         serviceNotification?.let {
-            startForegroundMediaProjectionServiceCompat(NotificationIds.FOREGROUND_SERVICE_NOTIFICATION_ID, it)
+            startForegroundMediaProjectionServiceCompat(FOREGROUND_NOTIFICATION_ID, it)
         }
         requestFilterKeyEvents(true)
 
         displayConfigManager.startMonitoring(this)
-        tileRepository.setTileScenario(scenarioId = scenarioId, isSmart = isSmart)
     }
 
     private fun onLocalServiceStopped() {
@@ -168,11 +147,30 @@ class SmartAutoClickerService : AccessibilityService(), SmartActionExecutor {
     }
 
     override fun executeNotification(notification: NotificationRequest) {
-        userNotificationsController.showNotification(this, notification)
+        val channelId = "scenario_notification_channel"
+        val manager = getSystemService(NotificationManager::class.java) ?: return
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                channelId,
+                getString(R.string.notification_channel_name),
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            manager.createNotificationChannel(channel)
+        }
+
+        val builder = NotificationCompat.Builder(this, channelId)
+            .setSmallIcon(R.mipmap.ic_smart_auto_clicker)
+            .setContentTitle(notification.title)
+            .setContentText(notification.message)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setAutoCancel(true)
+
+        manager.notify(notification.actionId.toInt(), builder.build())
     }
 
     override fun clearState() {
-        userNotificationsController.clearAll()
+        // Nothing to clear now that notifications are disabled.
     }
 
     /** Return screen bounds from the active root node; fallback to display metrics. */
@@ -349,3 +347,4 @@ class SmartAutoClickerService : AccessibilityService(), SmartActionExecutor {
 
 /** Tag for the logs. */
 private const val TAG = "SmartAutoClickerService"
+private const val FOREGROUND_NOTIFICATION_ID = 1001

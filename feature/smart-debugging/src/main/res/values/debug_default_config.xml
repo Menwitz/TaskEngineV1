@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<resources>
-    <bool name="default_debug_view_enabled">false</bool>
-    <bool name="default_debug_report_enabled">false</bool>
-</resources>

@@ -22,14 +22,18 @@
     android:layout_height="wrap_content"
     android:animateLayoutChanges="false">
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/menu_background"
         style="@style/AppTheme.Overlay.FloatingMenu.CardView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         tools:viewBindingIgnore="true">
 
         <LinearLayout
             android:id="@+id/menu_items"
-            style="@style/AppTheme.Overlay.FloatingMenu.LayoutButtons">
+            style="@style/AppTheme.Overlay.FloatingMenu.LayoutButtons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
             <ImageButton
                 android:id="@+id/btn_save"
@@ -59,5 +63,5 @@
 
         </LinearLayout>
 
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 </FrameLayout>

@@ -1,12 +1,13 @@
 
 package com.buzbuz.gradle.convention
 
-import com.buzbuz.gradle.core.libs.getLibs
 import com.buzbuz.gradle.core.androidApp
+import com.buzbuz.gradle.core.libs.getLibs
 import com.buzbuz.gradle.core.plugins
-
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.configure
+import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
 
 class AndroidApplicationConventionPlugin : Plugin<Project> {
 
@@ -22,7 +23,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
             compileSdk = libs.versions.android.compileSdk
 
             defaultConfig.apply {
-                targetSdk = libs.versions.android.compileSdk
+                targetSdk = libs.versions.android.targetSdk
                 minSdk = libs.versions.android.minSdk
             }
 
@@ -37,6 +38,12 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                     isShrinkResources = true
                     proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
                 }
+            }
+        }
+
+        extensions.configure<KotlinAndroidProjectExtension> {
+            compilerOptions {
+                jvmTarget.set(libs.versions.jvmTargetEnum)
             }
         }
     }

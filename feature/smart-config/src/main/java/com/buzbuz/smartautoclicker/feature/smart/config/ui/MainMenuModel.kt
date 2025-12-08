@@ -11,7 +11,6 @@ import androidx.lifecycle.viewModelScope
 import com.buzbuz.smartautoclicker.core.processing.domain.DetectionRepository
 import com.buzbuz.smartautoclicker.core.processing.domain.DetectionState
 import com.buzbuz.smartautoclicker.feature.smart.config.domain.EditionRepository
-import com.buzbuz.smartautoclicker.feature.smart.debugging.domain.DebuggingRepository
 import com.buzbuz.smartautoclicker.core.ui.monitoring.MonitoredViewsManager
 import com.buzbuz.smartautoclicker.core.ui.monitoring.ViewPositioningType
 import com.buzbuz.smartautoclicker.core.ui.monitoring.MonitoredViewType
@@ -36,7 +35,6 @@ class MainMenuModel @Inject constructor(
     private val detectionRepository: DetectionRepository,
     private val editionRepository: EditionRepository,
     private val monitoredViewsManager: MonitoredViewsManager,
-    private val debugRepository: DebuggingRepository,
 ) : ViewModel() {
 
     private val scenarioDbId: StateFlow<Long?> = detectionRepository.scenarioId
@@ -47,7 +45,7 @@ class MainMenuModel @Inject constructor(
             initialValue = null,
         )
 
-    private var paywallResultJob: Job? = null
+
 
     /** The current of the detection. */
     val detectionState: StateFlow<UiState> = detectionRepository.detectionState
@@ -97,10 +95,7 @@ class MainMenuModel @Inject constructor(
 
     private fun startDetection(context: Context) {
         viewModelScope.launch {
-            detectionRepository.startDetection(
-                context,
-                debugRepository.getDebugDetectionListenerIfNeeded(context),
-            )
+            detectionRepository.startDetection(context, progressListener = null)
         }
     }
 

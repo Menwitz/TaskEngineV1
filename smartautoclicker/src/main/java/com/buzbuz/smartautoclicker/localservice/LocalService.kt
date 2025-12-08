@@ -2,22 +2,26 @@
 package com.buzbuz.smartautoclicker.localservice
 
 import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.media.projection.MediaProjectionManager
+import android.os.Build
 import android.view.KeyEvent
 
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+
+import com.buzbuz.smartautoclicker.R
 import com.buzbuz.smartautoclicker.core.base.data.AppComponentsProvider
 import com.buzbuz.smartautoclicker.core.common.overlays.manager.OverlayManager
 import com.buzbuz.smartautoclicker.core.domain.model.SmartActionExecutor
 import com.buzbuz.smartautoclicker.core.domain.model.scenario.Scenario
 import com.buzbuz.smartautoclicker.core.processing.domain.DetectionRepository
 import com.buzbuz.smartautoclicker.core.processing.domain.DetectionState
-import com.buzbuz.smartautoclicker.core.settings.SettingsRepository
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.MainMenu
-import com.buzbuz.smartautoclicker.feature.notifications.service.ServiceNotificationController
-import com.buzbuz.smartautoclicker.feature.notifications.service.ServiceNotificationListener
-import com.buzbuz.smartautoclicker.feature.smart.debugging.domain.DebuggingRepository
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -34,36 +38,23 @@ class LocalService(
     private val context: Context,
     private val overlayManager: OverlayManager,
     private val appComponentsProvider: AppComponentsProvider,
-    private val settingsRepository: SettingsRepository,
     private val detectionRepository: DetectionRepository,
-    private val debugRepository: DebuggingRepository,
     private val androidExecutor: SmartActionExecutor,
     private val onStart: (scenarioId: Long, isSmart: Boolean, foregroundNotification: Notification?) -> Unit,
     private val onStop: () -> Unit,
+    private val notificationId: Int,
 ) : ILocalService {
 
     /** Scope for this LocalService. */
     private val serviceScope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     /** Coroutine job for the delayed start of engine & ui. */
     private var startJob: Job? = null
-    /** Coroutine job for the paywall result upon start from notification. */
-    private var paywallResultJob: Job? = null
-
     /** Controls the notifications for the foreground service. */
-    private val notificationController: ServiceNotificationController by lazy {
-        ServiceNotificationController(
-            context = context,
-            appComponentsProvider = appComponentsProvider,
-            settingsRepository = settingsRepository,
-            listener = object : ServiceNotificationListener {
-                override fun onPlay() = play()
-                override fun onPause()= pause()
-                override fun onShow() = showMenu()
-                override fun onHide() = hideMenu()
-                override fun onStop() = stop()
-            }
-        )
-    }
+    private val notificationController = LocalNotificationController(
+        context = context,
+        appComponentsProvider = appComponentsProvider,
+        notificationId = notificationId,
+    )
 
     /** State of this LocalService. */
     private var state: LocalServiceState = LocalServiceState(isStarted = false, isSmartLoaded = false)
@@ -76,13 +67,12 @@ class LocalService(
             .map { it == DetectionState.DETECTING }   // running ⇔ detecting
             .distinctUntilChanged()                    // avoid redundant notification updates
             .onEach { isRunning ->
-                notificationController.updateNotification(context, isRunning, !overlayManager.isStackHidden())
+                notificationController.updateNotification(isRunning, !overlayManager.isStackHidden())
             }
             .launchIn(serviceScope)
 
         overlayManager.onVisibilityChangedListener = {
             notificationController.updateNotification(
-                context,
                 detectionRepository.isRunning(),
                 !overlayManager.isStackHidden()
             )
@@ -111,7 +101,6 @@ class LocalService(
             scenario.id.databaseId,
             true,
             notificationController.createNotification(
-                context = context,
                 scenarioName = scenario.name,
                 isRunning = false,
                 isMenuVisible = true
@@ -184,7 +173,7 @@ class LocalService(
         serviceScope.launch {
             detectionRepository.startDetection(
                 context,
-                debugRepository.getDebugDetectionListenerIfNeeded(context),
+                progressListener = null,
             )
         }
     }
@@ -202,3 +191,74 @@ private data class LocalServiceState(
     val isStarted: Boolean,
     val isSmartLoaded: Boolean
 )
+
+private class LocalNotificationController(
+    private val context: Context,
+    private val appComponentsProvider: AppComponentsProvider,
+    private val notificationId: Int,
+) {
+
+    private val notificationManager = NotificationManagerCompat.from(context)
+    private val channelId = "auto_clicker_foreground"
+
+    init {
+        ensureChannel()
+    }
+
+    fun createNotification(
+        scenarioName: String?,
+        isRunning: Boolean,
+        isMenuVisible: Boolean,
+    ): Notification = buildNotification(scenarioName, isRunning, isMenuVisible)
+
+    fun updateNotification(isRunning: Boolean, isMenuVisible: Boolean) {
+        notificationManager.notify(notificationId, buildNotification(null, isRunning, isMenuVisible))
+    }
+
+    fun destroyNotification() {
+        notificationManager.cancel(notificationId)
+    }
+
+    private fun buildNotification(
+        scenarioName: String?,
+        isRunning: Boolean,
+        isMenuVisible: Boolean,
+    ): Notification {
+        val launchIntent = Intent()
+            .setComponent(appComponentsProvider.scenarioActivityComponentName)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        val contentIntent = PendingIntent.getActivity(
+            context,
+            0,
+            launchIntent,
+            PendingIntent.FLAG_IMMUTABLE,
+        )
+
+        val statusText = when {
+            isRunning -> context.getString(R.string.notification_status_running)
+            isMenuVisible -> context.getString(R.string.notification_status_ready)
+            else -> context.getString(R.string.notification_status_hidden)
+        }
+
+        return NotificationCompat.Builder(context, channelId)
+            .setSmallIcon(R.mipmap.ic_smart_auto_clicker)
+            .setContentTitle(scenarioName ?: context.getString(R.string.app_name))
+            .setContentText(statusText)
+            .setContentIntent(contentIntent)
+            .setOngoing(true)
+            .setOnlyAlertOnce(true)
+            .build()
+    }
+
+    private fun ensureChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val manager = context.getSystemService(NotificationManager::class.java)
+            val channel = NotificationChannel(
+                channelId,
+                context.getString(R.string.notification_channel_service),
+                NotificationManager.IMPORTANCE_LOW,
+            )
+            manager?.createNotificationChannel(channel)
+        }
+    }
+}

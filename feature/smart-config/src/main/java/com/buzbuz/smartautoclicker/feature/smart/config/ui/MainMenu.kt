@@ -23,12 +23,9 @@ import com.buzbuz.smartautoclicker.feature.smart.config.databinding.OverlayMenuB
 import com.buzbuz.smartautoclicker.feature.smart.config.di.ScenarioConfigViewModelsEntryPoint
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.common.starters.newRestartMediaProjectionStarterOverlay
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.scenario.ScenarioDialog
-import com.buzbuz.smartautoclicker.feature.smart.debugging.di.DebuggingViewModelsEntryPoint
-import com.buzbuz.smartautoclicker.feature.smart.debugging.ui.overlay.DebugModel
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 /**
@@ -41,28 +38,20 @@ import kotlinx.coroutines.launch
  * There is no overlay views attached to this overlay menu, meaning that the user will always be able to clicks on the
  * Activities displayed below it.
  */
-class MainMenu(private val onStopClicked: () -> Unit) : OverlayMenu() {
+class MainMenu(private val onStopClicked: () -> Unit) : OverlayMenu(theme = R.style.ScenarioConfigTheme) {
 
     /** The view model for this menu. */
     private val viewModel: MainMenuModel by viewModels(
         entryPoint = ScenarioConfigViewModelsEntryPoint::class.java,
         creator = { mainMenuViewModel() },
     )
-    /** The view model for the debugging features. */
-    private val debuggingViewModel: DebugModel by viewModels(
-        entryPoint = DebuggingViewModelsEntryPoint::class.java,
-        creator = { debugModel() },
-    )
 
-    private var isHiddenForPaywall: Boolean = false
+
 
     /** View binding for the content of the overlay. */
     private lateinit var viewBinding: OverlayMenuBinding
     /** Controls the animations of the play/pause button. */
     private lateinit var playPauseButtonController: AnimatedStatesImageButtonController
-
-    /** The coroutine job for the observable used in debug mode. Null when not in debug mode. */
-    private var debugObservableJob: Job? = null
 
     /**
      * Tells if this service has handled onKeyEvent with ACTION_DOWN for a key in order to return
@@ -87,17 +76,12 @@ class MainMenu(private val onStopClicked: () -> Unit) : OverlayMenu() {
     override fun onCreate() {
         super.onCreate()
 
-        // Ensure the debug view state is correct
-        viewBinding.layoutDebug.visibility = View.GONE
-        setOverlayViewVisibility(false)
-
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch { viewModel.isStartButtonEnabled.collect(::updatePlayPauseButtonEnabledState) }
                 launch { viewModel.isMediaProjectionStarted.collect(::updateProjectionErrorBadge) }
                 launch { viewModel.detectionState.collect(::updateDetectionState) }
                 launch { viewModel.nativeLibError.collect(::showNativeLibErrorDialogIfNeeded) }
-                launch { debuggingViewModel.isDebugging.collect(::updateDebugOverlayViewVisibility) }
             }
         }
     }
@@ -120,6 +104,8 @@ class MainMenu(private val onStopClicked: () -> Unit) : OverlayMenu() {
         super.onDestroy()
         playPauseButtonController.detachView()
     }
+
+    override fun animateOverlayView(): Boolean = false
 
     override fun onKeyEvent(keyEvent: KeyEvent): Boolean {
         if (!keyEvent.isStopScenarioKey()) return false
@@ -152,11 +138,7 @@ class MainMenu(private val onStopClicked: () -> Unit) : OverlayMenu() {
     }
 
     override fun getWindowMaximumSize(backgroundView: ViewGroup): Size {
-        val bgSize = super.getWindowMaximumSize(backgroundView)
-        return Size(
-            bgSize.width + context.resources.getDimensionPixelSize(R.dimen.overlay_debug_panel_width),
-            bgSize.height,
-        )
+        return super.getWindowMaximumSize(backgroundView)
     }
 
     fun onMediaProjectionLost() {
@@ -223,54 +205,10 @@ class MainMenu(private val onStopClicked: () -> Unit) : OverlayMenu() {
         }
     }
 
-    private fun updateVisibilityForPaywall(isHidden: Boolean) {
-        if (isHidden) {
-            isHiddenForPaywall = true
-            hide()
-        } else if (isHiddenForPaywall) {
-            isHiddenForPaywall = false
-            show()
-        }
-    }
 
-    /**
-     * Change the debug state of this UI.
-     * @param isVisible true when the debug view should be shown, false to hide it.
-     */
-    private fun updateDebugOverlayViewVisibility(isVisible: Boolean) {
-        if (isVisible && debugObservableJob == null) {
-            viewBinding.layoutDebug.visibility = View.VISIBLE
-            debugObservableJob = observeDebugValues()
-
-        } else if (!isVisible && debugObservableJob != null) {
-            debugObservableJob?.cancel()
-            debugObservableJob = null
-
-            viewBinding.debugEventName.text = null
-            viewBinding.debugConditionName.text = null
-            viewBinding.debugConfidenceRate.text = null
-            viewBinding.layoutDebug.visibility = View.GONE
-        }
-    }
 
     private fun updateProjectionErrorBadge(isProjectionStarted: Boolean) {
         viewBinding.errorBadge.visibility = if (isProjectionStarted) View.GONE else View.VISIBLE
-    }
-
-    /**
-     * Observe the values for the debug and update the debug views.
-     * @return the coroutine job for the observable. Can be cancelled to stop the observation.
-     */
-    private fun observeDebugValues() = lifecycleScope.launch {
-        repeatOnLifecycle(Lifecycle.State.STARTED) {
-            launch {
-                debuggingViewModel.debugLastPositive.collect { debugInfo ->
-                    viewBinding.debugEventName.text = debugInfo.eventName
-                    viewBinding.debugConditionName.text = debugInfo.conditionName
-                    viewBinding.debugConfidenceRate.text = debugInfo.confidenceRateText
-                }
-            }
-        }
     }
 
     private fun showScenarioConfigDialog() =

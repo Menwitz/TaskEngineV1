@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+    <!--
+      - Titles for the dialogs displayed from the activity.
+      - Regular Android dialog title characters size.
+      -->
+    <string name="dialog_title_permission_accessibility">Accessibility service</string>
+    <string name="dialog_title_permission_notification">Notification</string>
+    <string name="dialog_title_permission_mandatory_denied">Permission denied</string>
+    <string name="dialog_title_permission_overlay">Overlay</string>
+
+    <!--
+      - Messages.
+      - Views handles any length here, so no limitations.
+      -->
+    <string name="message_permission_desc_overlay">The overlay permission is required in order to show Klick\'r
+        interface over the applications you want to automate, allowing you to configure your scenario without stopping
+        the other application.</string>
+    <string name="message_permission_desc_accessibility">The accessibility service permission allows Klick\'r
+        to perform gestures on your device screen. This permission is required in order to execute the clicks and swipes
+        you will create in your automations scenarios.\n\nNo data is collected by Klick\'r\n\nTo grant the Accessibility
+        service permission, click on the button bellow.</string>
+    <string name="message_permission_desc_notification">Optional: Shows the notification while the application is running in order
+        to easily return to the scenario selection screen.</string>
+    <string name="message_permission_mandatory_denied">This permission is mandatory for Klick\'r.
+        It won\'t be able to work correctly without it.</string>
+
+    <!--
+      - TextButton content.
+      - Should be short and concise.
+      -->
+    <string name="button_request_permission">Request permission</string>
+    <string name="button_deny">Deny</string>
+
+    <!-- Content descriptions -->
+    <string name="content_desc_copy_button">Copy item</string>
+    <string name="content_desc_add_button">Add new item</string>
+    <string name="content_desc_action_icon">Action icon</string>
+    <string name="content_desc_drag_and_drop">Drag and drop handle</string>
+    <string name="content_desc_move_menu">Move overlay menu</string>
+    <string name="content_desc_play_pause_scenario">Play or pause scenario</string>
+    <string name="content_desc_stop_clicker">Stop AutoClicker</string>
+    <string name="content_desc_confirm">Confirm selection</string>
+    <string name="content_desc_go_back">Go back</string>
+    <string name="content_desc_actions_count">Number of actions</string>
+    <string name="content_desc_conditions_count">Number of conditions</string>
+    <string name="content_desc_event_state">Toggle event state</string>
+    <string name="content_desc_add_scenario">Add scenario</string>
+    <string name="content_desc_application_icon">Application icon</string>
+    <string name="content_desc_image_condition">Image condition preview</string>
+    <string name="content_desc_open_event_list">Open event list</string>
+    <string name="overlay_instructions_gesture_record">Place your finger on the screen to record a gesture.</string>
+    <string name="dropdown_label_time_unit">Time unit</string>
+    <string name="dropdown_label_time_unit_ms">Milliseconds</string>
+    <string name="dropdown_label_time_unit_s">Seconds</string>
+    <string name="dropdown_label_time_unit_min">Minutes</string>
+    <string name="dropdown_label_time_unit_h">Hours</string>
+    <string name="input_field_error_required">This field is required</string>
+    <string name="toast_configure_single_click">Tap the future click position.</string>
+    <string name="toast_configure_swipe_from">Tap the starting point of your swipe.</string>
+    <string name="toast_configure_swipe_to">Tap the end point of your swipe.</string>
+    <string name="dialog_move_to_position_label">Position</string>
+    <string name="dialog_move_to_title">Move item to position</string>
+    <string name="item_brief_items_count">%1$d of %2$d</string>
+
+</resources>

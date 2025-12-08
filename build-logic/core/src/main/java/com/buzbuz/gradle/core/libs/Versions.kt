@@ -3,6 +3,7 @@ package com.buzbuz.gradle.core.libs
 
 import org.gradle.api.JavaVersion
 import org.gradle.api.artifacts.VersionCatalog
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 class Versions internal constructor(private val libs: VersionCatalog) {
 
@@ -11,6 +12,8 @@ class Versions internal constructor(private val libs: VersionCatalog) {
     inner class Android internal constructor() {
         val compileSdk: Int
             get() = libs.getVersion("androidCompileSdk")
+        val targetSdk: Int
+            get() = libs.getVersion("androidTargetSdk")
         val minSdk: Int
             get() = libs.getVersion("androidMinSdk")
     }
@@ -20,6 +23,9 @@ class Versions internal constructor(private val libs: VersionCatalog) {
 
     val jvmTarget: String
         get() = libs.getStringVersion("java")
+
+    val jvmTargetEnum: JvmTarget
+        get() = JvmTarget.fromTarget(libs.getStringVersion("java"))
 
 
     private fun VersionCatalog.getVersion(alias: String): Int =

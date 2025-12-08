@@ -36,6 +36,8 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_delete"
             style="@style/AppTheme.Widget.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/margin_horizontal_default"
             app:layout_constraintStart_toEndOf="@id/scenario_name"
             app:layout_constraintEnd_toStartOf="@id/button_start"
@@ -47,6 +49,8 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_start"
             style="@style/AppTheme.Widget.IconButtonFilled"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:layout_constraintStart_toEndOf="@id/button_delete"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"

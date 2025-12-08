@@ -12,6 +12,12 @@
     <string name="notification_button_pause_and_show">Pause and show</string>
     <string name="notification_button_toggle_menu">Show/Hide</string>
     <string name="notification_button_stop">Stop</string>
+    <string name="notification_channel_service" translatable="false">Automation service</string>
+    <string name="notification_status_running">Scenario running</string>
+    <string name="notification_status_ready">Ready to start</string>
+    <string name="notification_status_hidden">Service paused</string>
+    <string name="backup_disabled_title">Backup unavailable</string>
+    <string name="backup_disabled_message">Backup and restore were removed from this build.</string>
 
     <string name="activity_scenario_title">Scenarios</string>
     <string name="accessibility_service_description">This application needs this service to inject the clicks you have
@@ -22,8 +28,9 @@
       - Titles for the dialogs displayed from the activity.
       - Regular Android dialog title characters size.
       -->
-    <string name="dialog_title_add_scenario">New scenario</string>
+
     <string name="dialog_title_copy_scenario">Copy scenario</string>
+    <string name="dialog_title_delete_scenario">Delete scenario</string>
 
     <!--
       - Text for menu items.
@@ -92,7 +99,7 @@
 
 
     <!-- Default name when creating a new scenario -->
-    <string name="default_scenario_name">Default name</string>
+
     <string name="message_empty_image_events_scenario_list">No image events</string>
 
 

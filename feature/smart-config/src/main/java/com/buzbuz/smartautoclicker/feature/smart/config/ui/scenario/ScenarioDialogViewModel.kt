@@ -49,7 +49,6 @@ class ScenarioDialogViewModel @Inject constructor(
             put(R.id.page_trigger_events, triggerEventsState.canBeSaved &&
                     (!imageEventsState.value.isNullOrEmpty() || !triggerEventsState.value.isNullOrEmpty()))
             put(R.id.page_config, scenarioState.canBeSaved)
-            put(R.id.page_more, true)
         }
     }
 

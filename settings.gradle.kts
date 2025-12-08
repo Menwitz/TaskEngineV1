@@ -25,23 +25,9 @@ dependencyResolutionManagement {
 
 rootProject.name = "Auto Cliker"
 
-include(":core:common:android")
-include(":core:common:base")
-include(":core:common:bitmaps")
-include(":core:common:display")
-include(":core:common:overlays")
-include(":core:common:permissions")
-include(":core:common:quality")
-include(":core:common:settings")
-include(":core:common:ui")
-include(":core:smart:database")
-include(":core:smart:detection")
-include(":core:smart:domain")
-include(":core:smart:processing")
-include(":feature:backup")
-include(":feature:notifications")
-include(":feature:quick-settings-tile")
+include(":core:common")
+include(":core:ui")
+include(":core:smart")
 include(":feature:smart-config")
-include(":feature:smart-debugging")
 
 include(":smartautoclicker")

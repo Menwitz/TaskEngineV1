@@ -104,23 +104,5 @@ class SettingsFragment : Fragment() {
         }
     }
 
-    private fun updatePrivacySettingsVisibility(shouldBeVisible: Boolean) {
-        if (shouldBeVisible) {
-            viewBinding.dividerPrivacySettings.visibility = View.VISIBLE
-            viewBinding.fieldPrivacySettings.root.visibility = View.VISIBLE
-        } else {
-            viewBinding.dividerPrivacySettings.visibility = View.GONE
-            viewBinding.fieldPrivacySettings.root.visibility = View.GONE
-        }
-    }
 
-    private fun updateRemoveAdsVisibility(shouldBeVisible: Boolean) {
-        if (shouldBeVisible) {
-            viewBinding.dividerRemoveAds.visibility = View.VISIBLE
-            viewBinding.fieldRemoveAds.root.visibility = View.VISIBLE
-        } else {
-            viewBinding.dividerRemoveAds.visibility = View.GONE
-            viewBinding.fieldRemoveAds.root.visibility = View.GONE
-        }
-    }
 }

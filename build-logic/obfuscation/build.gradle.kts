@@ -24,8 +24,8 @@ dependencies {
     compileOnly(libs.android.gradlePlugin)
     compileOnly(libs.kotlin.gradlePlugin)
     compileOnly(libs.androidx.room.gradlePlugin)
-    compileOnly(libs.google.firebase.crashlytics.gradlePlugin)
-    compileOnly(libs.google.gms.gradlePlugin)
+
+
     implementation(project(":core"))
 }
 

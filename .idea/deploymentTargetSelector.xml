@@ -2,19 +2,16 @@
 <project version="4">
   <component name="deploymentTargetSelector">
     <selectionStates>
-      <SelectionState runConfigName="Cliker">
+      <SelectionState runConfigName="Auto_Cliker.smartautoclicker">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-08-11T15:34:21.619452Z">
+        <DropdownSelection timestamp="2025-12-08T08:48:14.150536Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=4C151FDAP00110" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=19141FDF6007DG" />
             </handle>
           </Target>
         </DropdownSelection>
         <DialogSelection />
-      </SelectionState>
-      <SelectionState runConfigName="app">
-        <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
   </component>
