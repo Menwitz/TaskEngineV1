@@ -29,17 +29,23 @@ class ExplorationService(
         
         while (isExploring) {
             val root = rootProvider()
-            if (root == null) { delay(1000); continue }
+            if (root == null) { 
+                Log.w("Exploration", "Root node is NULL. Retrying...")
+                delay(1000)
+                continue 
+            }
             
             // 1. Parse Current State
             val snapshot = parser.parse(root, screenMetrics.first, screenMetrics.second)
+            Log.d("Exploration", "Parsed ${snapshot.elements.size} elements from screen.")
+
             val currentNode = navigationGraph.addOrGetNode(snapshot)
             
             // 2. Decide next exploration step (Simple DFS/Greedy)
             val action = selectNextExplorationAction(currentNode)
             
             if (action == null) {
-                Log.i("Exploration", "No more actions to explore in this branch. Backtracking...")
+                Log.i("Exploration", "No more actions to explore in this branch. (Parsed ${snapshot.elements.size} items). Stopping.")
                 // In a real implementation: Execute BACK
                 // For safety in this POC: Just stopping.
                 isExploring = false
@@ -49,6 +55,10 @@ class ExplorationService(
             // 3. Execute
             Log.i("Exploration", "Exploring action: $action")
             val success = actionExecutor.execute(action, snapshot)
+            if (!success) {
+                Log.e("Exploration", "Action Execution Failed: $action")
+            }
+
             delay(2000) // Wait for settle
             
             if (success) {
