@@ -2,8 +2,8 @@
 
 <resources>
 
-    <string name="app_name" translatable="false">AAuto Click</string>
-    <string name="notification_channel_name" translatable="false">Auto Click</string>
+    <string name="app_name" translatable="false">Tapt</string>
+    <string name="notification_channel_name" translatable="false">Tapt Service</string>
 
     <!-- Application wide texts. -->
     <string name="notification_title">Scenario: %1$s</string>
@@ -20,9 +20,7 @@
     <string name="backup_disabled_message">Backup and restore were removed from this build.</string>
 
     <string name="activity_scenario_title">Scenarios</string>
-    <string name="accessibility_service_description">This application needs this service to inject the clicks you have
-        created into the other applications once the conditions have been detected.\n\nNo data will be collected from
-        this application. Feel free to visit our github, the code is open source !</string>
+    <string name="accessibility_service_description">Tapt uses this service to perceive the screen and execute precise actions on your behalf.\n\nTapt operates with full transparency and does not collect personal data. Experience the scalability of a bot with the context of a human.</string>
 
     <!--
       - Titles for the dialogs displayed from the activity.
@@ -68,8 +66,7 @@
       - Views handles any length here, so no limitations.
       -->
     <string name="message_delete_scenario">This will delete %1$s. Are you sure ?</string>
-    <string name="message_error_screen_capture_permission_dialog_not_found">Your device does not provide the standard
-        Android screen capture permission dialog. Klick\'r won\'t be able to run on it.</string>
+    <string name="message_error_screen_capture_permission_dialog_not_found">Your device lacks the standard screen capture dialog. Tapt cannot function without it.</string>
 
     <!--
       - Section titles.
@@ -130,8 +127,8 @@
     <!-- Legacy condition migration dialog  ======================================================================== -->
     <string name="dialog_condition_migration_title">Migration</string>
 
-    <string name="message_condition_migration_desc">Klick\'r images format have changed and your scenario needs to be updated.
-        This can take a few minutes depending on the number of conditions to migrate.</string>
+    <string name="message_condition_migration_desc">Image formats have changed. Tapt is optimizing your scenarios.
+        This may take a moment.</string>
     <string name="message_condition_migration_count">%1$d Image Conditions to migrate.</string>
     <string name="message_condition_migration_success">All Image Conditions migrated.</string>
     <string name="message_condition_migration_error">Some conditions could not be migrated. Please check your scenarios.</string>
