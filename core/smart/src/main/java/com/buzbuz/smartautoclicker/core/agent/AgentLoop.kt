@@ -90,6 +90,11 @@ class AgentLoop(
         )
         
         val response = brain.generateResponse(messages)
+
+        if (response.content.startsWith("Error:") || response.content.startsWith("Exception:")) {
+            Log.e("AgentLoop", "Brain Malfunction: ${response.content}")
+            return null
+        }
         
         try {
             val jsonString = response.content.trim().let {
