@@ -151,7 +151,8 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginHorizontal">@dimen/margin_horizontal_mini</item>
         <item name="android:layout_marginVertical">@dimen/margin_vertical_mini</item>
-        <item name="android:backgroundTint">?attr/colorSurfaceVariant</item>
+        <item name="android:backgroundTint">@android:color/transparent</item>
+        <item name="android:tint">#FFFFFF</item>
     </style>
 
     <!-- Buttons -->
